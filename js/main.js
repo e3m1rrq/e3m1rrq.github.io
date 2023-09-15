@@ -165,7 +165,6 @@ function links(){
   <li><a href=\"https://www.instagram.com/e3m1rrq/\" target=\"_blank\"><i class=\"fab fa-instagram\"></i> Instagram</a></li>\
   <li><a href=\"https://github.com/e3m1rrq\" target=\"_blank\"><i class=\"fab fa-github\"></i> Github</a></li>\
   <li><a href=\"https://lichess.org/@/masterbusyon\" target=\"_blank\"><i class=\"♚\"></i> ♚ Lichess</a></li>\
-  <li><a href=\"https://e3m1rrq.github.io\" target=\"_blank\"><i class=\"🇹🇷\"></i>🇹🇷 My Fun Website</a></li>\
   </ul>";
 }
 
