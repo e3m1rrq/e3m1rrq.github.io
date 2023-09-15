@@ -1,9 +1,10 @@
-![Screenshot](src/screenshot.png)
-# bash-CV
-bash-CV is an simple, open source, Personal Website HTML Template with a command line interface. Perfect for programmers, geeks, and whoever finds the Command Line cool. It is based on HTML, CSS and vanilla JavaScript and thus compatible with GitHub Pages.
+Website --> [Click Me!](https://e3m1rrq.github.io/).
 
-## Usage
-Simply fork or download the project and start customizing the index.html and main.js files to show the text you desire. You can then use Github Pages or any other hosting service to publish it.
 
-## Live demo:
-You can see the website in action [here.](https://cedarctic.github.io/bash-CV/) Hint: Enter rickroll as a command ;)
+# Welcome! 👋
+**Haven't you grown tired of regular, click-driven websites that just guide you along? See only what you want to see. That's why I've set up a console (terminal) themed website. I will use this site as my CV and e-portfolio in the present and future. But don't worry, the site will never stay like this. I will continually add more content and make it even more beautiful. So, the site will never die :).**
+
+# I'm Looking Forward to Your Contributions 💜
+**If you have experience in web development or design, or if you'd like to contribute to my project, please don't hesitate to reach out. Your feedback, suggestions, and support are valuable to me and will help take the project to the next level.**
+
+**Thank you, and I hope you enjoy exploring my website!**
