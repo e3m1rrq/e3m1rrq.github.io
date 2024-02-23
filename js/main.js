@@ -162,7 +162,7 @@ function other(){
 function links(){
   return "<span style=\"color: #6DA5C0;\"><h2>🔗Links:</h2></span><ul>\
   <li><a href=\"https://open.spotify.com/user/31tsxmadimijk3aofa3yh5pskjhy?si=751caad4c16d43ca&nd=1\" target=\"_blank\"><i class=\"fab fa-spotify\"></i> Spotify</a></li>\
-  <li><a href=\"https://www.instagram.com/e3m1rrq/\" target=\"_blank\"><i class=\"fab fa-instagram\"></i> Instagram</a></li>\
+  <li><a href=\"https://www.instagram.com/em1r.json/\" target=\"_blank\"><i class=\"fab fa-instagram\"></i> Instagram</a></li>\
   <li><a href=\"https://github.com/e3m1rrq\" target=\"_blank\"><i class=\"fab fa-github\"></i> Github</a></li>\
   <li><a href=\"https://lichess.org/@/masterbusyon\" target=\"_blank\"><i class=\"♚\"></i> ♚ Lichess</a></li>\
   </ul>";
