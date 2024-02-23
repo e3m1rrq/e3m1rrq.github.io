@@ -72,7 +72,7 @@ function contact(){
 <li>Additionally, please inform us of any features you would like to be added or removed from our site. We will make the most suitable decision for the community.</li>\
 </tr>\
 <td></td>\
-<li><a href=\"https://www.instagram.com/e3m1rrq/\" target=\"_blank\"><i class=\"fab fa-instagram\"></i> Instagram</a></li>\</tr>\
+<li><a href=\"https://www.instagram.com/em1r.json/\" target=\"_blank\"><i class=\"fab fa-instagram\"></i> Instagram</a></li>\</tr>\
 <td></td>\
 </tr>\
 </tr></table>";
