@@ -146,7 +146,7 @@ function other(){
     </tr>\
     <tr>\
     <td>npass</td>\
-      <td>Free N-Word Pass</td>\
+      <td>How to get N-Word Pass</td>\
     </tr>\
     <tr>\
     <td>weather</td>\
@@ -195,7 +195,8 @@ function commandProcessor(e){
     }else if (txtInput == "whoami") {
       document.getElementById('injected').innerHTML=whoami();
     }else if (txtInput == "npass") {
-      document.getElementById('injected').innerHTML=npass();
+      var win = window.open("https://npass.co/products/the-official-n-pass-1", '_blank');
+      win.focus();
     }else if (txtInput=="genre") {
       document.getElementById('injected').innerHTML=genre();
     }else if (txtInput=="links") {
