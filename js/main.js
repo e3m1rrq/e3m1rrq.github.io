@@ -1,3 +1,6 @@
+
+
+
 function help(){
   return "<h2><span style=\"color:#eb926d;\">Help:</span></h2><table>\
   <tr>\
@@ -146,7 +149,7 @@ function other(){
     </tr>\
     <tr>\
     <td>npass</td>\
-      <td>How to get N-Word Pass</td>\
+      <td>Free N-Word Pass</td>\
     </tr>\
     <tr>\
     <td>weather</td>\
@@ -195,14 +198,13 @@ function commandProcessor(e){
     }else if (txtInput == "whoami") {
       document.getElementById('injected').innerHTML=whoami();
     }else if (txtInput == "npass") {
-      var win = window.open("https://npass.co/products/the-official-n-pass-1", '_blank');
-      win.focus();
+      document.getElementById('injected').innerHTML=npass();
     }else if (txtInput=="genre") {
       document.getElementById('injected').innerHTML=genre();
     }else if (txtInput=="links") {
       document.getElementById('injected').innerHTML=links();
     }else if (txtInput == "jsu") {
-      var win = window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", '_blank');
+      var win = window.open("https://www.youtube.com/watch?v=RIPaBj4Jhvo", '_blank');
       win.focus();
       document.getElementById('injected').innerHTML=jsu();
     }else if (txtInput == "other") {
@@ -214,3 +216,5 @@ function commandProcessor(e){
     document.getElementById('txtBox').value= "";
   }
 }
+
+
