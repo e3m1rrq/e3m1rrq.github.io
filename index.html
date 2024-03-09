@@ -1,116 +1,57 @@
-  <html lang="en" dir="ltr">
-    <head>
-      <title>Hello! | Emir</title>
-      <link rel="icon" href="src/icon.ico">
-      <meta charset="utf-8">
-      <link rel="stylesheet" type="text/css" href="css/style.css">
-      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-      <script src="js/main.js"></script>
-    </head>
-    <body>
+<html lang="en" dir="ltr">
+  <head>
+    <title>Hello! | Emir</title>
+    <link rel="icon" href="src/icon.ico">
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <script src="js/main.js"></script>
+  </head>
+  <body oncontextmenu="return false;"></body>
 
-      <div class="container">
+    <div class="container">
 
-        <div id="sidebar">
-          <h1>Emir.</h1>
-          <img src="emir.png" alt="Profile Picture" id="profile">
-          <p>↪👤Emir</p>
-          <p>↪🎂14</p>
-          <p>↪🐈Mia</p>
-          <p>↪📍Turkey, Kütahya</p>
-          <p>↪🎯Software Developer</p>
+      <div id="sidebar">
+        <h1>Emir.</h1>
+        <img src="emir.png" alt="Profile Picture" id="profile">
+        <p>↪👤Emir</p>
+        <p>↪🎂14</p>
+        <p>↪🐈Mia</p>
+        <p>↪📍Turkey, Kütahya</p>
+        <p>↪🎯Software Developer</p>
+      </div>
+      
+
+      <div id="terminal">
+        <div id="injected"></div>
+        <div id="userInput">
+          <input type="text" value="visitor@terminal:$ ~" id="prompt" size = "14" readonly="readonly">
+          <input type="text" id="txtBox" onkeypress="commandProcessor(event)" placeholder="Try 'help'" size = "40" autofocus>
         </div>
-
-        <div id="terminal">
-          <div id="injected"></div>
-          <div id="userInput">
-            <input type="text" value="visitor@terminal:$ ~" id="prompt" size = "14" readonly="readonly">
-            <input type="text" id="txtBox" onkeypress="commandProcessor(event)" placeholder="Try 'help'" size = "40" autofocus>
-          </div>
-        </div>
-
       </div>
 
-      <footer>
-        <p id="Copyright">
-        <p><a href=https://www.instagram.com/em1r.json target=\"_blank\"> em1r.json</a></p>
-        </p>
-      </footer>
+      <div id="container">
+        <img id="image" src="hmm.gif" alt="Görsel">
+        <div id="speechBubble">Made By  <a href="https://www.instagram.com/em1r.json" target="_blank">@em1r.json</a></div>
+      </div>
 
-    </body>
-  </html>
-
- 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-    }
-
-    #container {
-      position: relative;
-    }
-
-    #image {
-      position: fixed;
-      bottom: 0px;
-      right: 0px;
-      height: 100px;
-      width: 100px;
-      cursor: pointer;
-      transition: transform 0.3s ease-in-out;
-    }
-
-    #image:hover {
-      transform: scale(1.1);
-    }
-
-    #overlay {
-      position: fixed;
-      top: 0;
-      right: 0;
-      left: 0;
-      bottom: 0;
-      background: rgba(5, 22, 26, 0.7); 
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: "Lucida Console", Monaco, monospace;
-      font-size: 25px;
-      display: none;
-    }
-
-    #overlay a {
-      color: #00f; /* Link rengini mavi olarak değiştirin (veya istediğiniz başka bir renk) */
-      text-decoration: underline;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-
-<div id="container">
-  <img id="image" src="hmm.gif" alt="Görsel">
-  <div id="overlay">Made By <a href="https://www.instagram.com/em1r.json" target="_blank">@em1r.json</a></div>
-</div>
+  </body>
+</html>
 
 <script>
-  const image = document.getElementById('image');
-  const overlay = document.getElementById('overlay');
+const image = document.getElementById('image');
+const speechBubble = document.getElementById('speechBubble');
 
-  image.addEventListener('click', () => {
-    overlay.style.display = 'flex';
-  });
+image.addEventListener('click', () => {
+  speechBubble.style.display = 'block';
+  setTimeout(() => {
+    speechBubble.style.display = 'none';
+  }, 7000); // Close after 7 seconds
+});
 
-  overlay.addEventListener('click', () => {
-    overlay.style.display = 'none';
-  });
+speechBubble.addEventListener('click', () => {
+  speechBubble.style.display = 'none';
+});
 </script>
 
-  
-  
-  
-  
+
