@@ -1,6 +1,3 @@
-
-
-
 function help(){
   return "<h2><span style=\"color:#eb926d;\">Help:</span></h2><table>\
   <tr>\
@@ -34,7 +31,7 @@ function help(){
   <tr>\
   <td>projects</td>\
   <td>Some projects.</td>\
-</tr>\\</table>";
+</tr>\</table>";
 }
 
 
