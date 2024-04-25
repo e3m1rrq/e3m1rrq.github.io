@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dosya İndir</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 50px;
+    }
+</style>
+</head>
+<body>
+    <h2>Dosya İndir</h2>
+    <a id="downloadLink" href="#" style="display: none;" download="proje.pptx">Dosyayı İndir</a>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var downloadLink = document.getElementById('downloadLink');
+        var fileURL = 'src/odev.pptx'; // Dosyanın yolu ve adını buraya girin
+        var fileName = 'proje.pptx'; // İndirilen dosyanın adı
+        downloadLink.setAttribute('href', fileURL);
+        downloadLink.setAttribute('download', fileName);
+        downloadLink.style.display = 'block';
+    });
+</script>
+</body>
+</html>
