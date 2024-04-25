@@ -1,0 +1,249 @@
+body{
+  font-family: "Lucida Console", "Lucida Sans Unicode", "Courier New";
+  color:white;
+  background-color: #05161A;
+  user-select: none;
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  -o-user-select: none;
+  user-select: none; 
+}
+
+a{
+  color:inherit;
+  font-weight: inherit;
+  text-decoration: inherit;
+}
+
+#sidebar{
+  margin: 5%;
+  margin-top: 0.5%;
+  text-align: justify;
+}
+
+#terminal{
+  margin:10%;
+}
+
+#image {
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  height: 100px;
+  width: 100px;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+  -webkit-user-drag: none;
+}
+
+#image:hover {
+  transform: scale(1.1);
+}
+
+#speechBubble {
+  position: fixed;
+  bottom: 120px;
+  right: 10px;
+  max-width: 200px; /* Yazi balonunun maksimum genişliğini ayarlayın */
+  background: rgba(5, 22, 26, 0.7);
+  color: #fff;
+  font-family: "Lucida Console", Monaco, monospace;
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 10px;
+  display: none;
+  user-select: none;
+} 
+
+#speechBubble a {
+color: red;
+text-decoration: underline;
+cursor: pointer;
+} 
+
+
+@media(min-width:1024px){
+  #sidebar{
+    flex-basis: 20%;
+    margin:2%;
+    margin-top:0.5%;
+    height: 10%;
+  }
+
+  #terminal{
+    flex-basis: 72%;
+    flex-direction: row;
+    margin-top:2%;
+    margin-right: 2%;
+    margin-left: auto;
+    margin-bottom: auto;
+  }
+
+  body{
+      overflow-x:hidden;
+  }
+}
+
+.container{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+#sidebar h1{
+  color: #58d49f;
+  font-size: 52px;
+}
+
+@media(max-width:1024px){
+  #sidebar h1{
+    font-size: 10vw;
+  }
+}
+
+#profile{
+  max-width: 100%;
+}
+
+#intro{
+  color: #de935f;
+  text-align: justify;
+}
+
+#prompt{
+  float:left;
+  width:auto;
+  font-size: 22px;
+  vertical-align: middle;
+  box-sizing: border-box;
+  background-color: #05161A;
+  color: #0F969C;
+  border: none;
+}
+
+#txtBox{
+  float:left;
+  width:auto;
+  font-size: 22px;
+  vertical-align: middle;
+  background-color: #05161A;
+  color: #b5bd68;
+  border-color: #294D61;
+  box-sizing: border-box;
+}
+
+#Copyright{
+  color: #00f2ff;
+  margin:1%;
+}
+
+#injected{
+  font-size: 15px;
+  color: white;
+  text-align: justify;
+  margin-top:2%;
+}
+
+#injected ul{
+  list-style: none;
+}
+
+#injected li, th, td {
+    padding-right: 45px;
+    padding-left: 25px;
+    padding-top: 7px;
+
+    text-align: left;
+}
+
+#userInput{
+  margin-top: 20px;
+}
+
+body{
+  font-family: "Lucida Console", "Lucida Sans Unicode", "Courier New";
+  color:white;
+  background-color: #05161A;
+  user-select: none;
+  -webkit-user-select: none;  
+  -moz-user-select: none;    
+  -ms-user-select: none;    
+  -o-user-select: none;
+  user-select: none; 
+}
+
+.tooltip {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: inline-block;
+}
+
+.tooltip button {
+  background-color: #024739;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s ease-out;
+}
+
+.tooltip button:hover {
+  background-color: #0b9663;
+  transform: scale(1.05);
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltiptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  right: 50%;
+  transform: translateX(50%);
+  margin-left: 100px; 
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 50%;
+  margin-right: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
+
+.animated-text {
+  animation: colorChange 3s infinite alternate; /* Renk değişimi için animasyon */
+}
+
+@keyframes colorChange {
+  0% {
+    color: rgb(255, 0, 0); /* Başlangıç rengi */
+  }
+  50% {
+    color: rgb(0, 255, 0); /* Orta noktadaki renk */
+  }
+  100% {
+    color: rgb(0, 0, 255); /* Son renk */
+  }
+}
+

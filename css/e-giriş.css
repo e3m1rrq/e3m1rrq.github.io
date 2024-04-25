@@ -1,0 +1,120 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #383e92;
+    color: #fff;
+}
+/*arkaplanı ayarlamak için*/
+
+.container {
+    text-align: center;
+}
+/*yazıları ortala*/
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+}
+/*hoş geldiniz yazısı boyut*/
+
+input[type="password"] {
+    width: 200px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+/*şifre girme ktuucuğu ayarlama*/
+
+.neon-button {
+    background-color: #00d4ff;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 0 10px #00d4ff;
+    transition: box-shadow 0.3s ease;
+}
+
+.neon-button:hover {
+    box-shadow: 0 0 20px #00d4ff;
+}
+
+.neon-button:focus {
+    outline: none;
+    box-shadow: 0 0 20px #00d4ff;
+}
+
+
+@keyframes neon-glow {
+    0% {
+        opacity: 1;
+        background-position: 0% 50%;
+    }
+    100% {
+        opacity: 0;
+        background-position: 100% 50%;
+    }
+}
+/*giriş yap butonu*/
+
+
+#theme-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    outline: none;
+    color: #00f;
+}
+
+.dark-theme {
+    background-color: white;
+    color: black;
+}
+
+@keyframes type-effect {
+    0% {
+        width: 0;
+    }
+    100% {
+        width: 100%;
+    }
+}
+
+#retype-text {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 36%;
+    font-size: 20px;
+    color: transparent;
+    white-space: nowrap;
+    overflow: visible;
+    border-right: 2px solid rgba(transparent);
+    animation: type-effect 7s steps(150) 1s, neon-glow 7s;
+    animation-iteration-count: 3;
+    animation-delay: 0s;
+    background: linear-gradient(90deg, #00d4ff, #6b00ff, #ff00f2, #00d4ff);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.dark-theme {
+    background-color: white;
+    color: black;
+}
