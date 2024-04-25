@@ -34,11 +34,7 @@ function help(){
   <tr>\
   <td>projects</td>\
   <td>Some projects.</td>\
-</tr>\
-  <tr>\
-    <td><a href=\"main.html\" class=\"animated-text\">web 👉New Website[CLICK]</a></td>\
-    <td>New Site Desing [BETA]🇹🇷</td>\
-  </tr>\</table>";
+</tr>\\</table>";
 }
 
 
@@ -247,6 +243,9 @@ function help(){
         document.getElementById('injected').innerHTML=jsu();
       }else if (txtInput == "web") {
         var win = window.open("main.html", '_blank');
+        win.focus();
+      }else if (txtInput == "odev") {
+        var win = window.open("indir.html", '_blank');
         win.focus();
       }else if (txtInput == "fun") {
         document.getElementById('injected').innerHTML=fun();
