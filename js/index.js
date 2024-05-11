@@ -241,8 +241,8 @@ function help(){
       }else if (txtInput == "web") {
         var win = window.open("main.html", '_blank');
         win.focus();
-      }else if (txtInput == "odev") {
-        var win = window.open("indir.html", '_blank');
+      }else if (txtInput == "serkan") {
+        var win = window.open("car.html", '_blank');
         win.focus();
       }else if (txtInput == "fun") {
         document.getElementById('injected').innerHTML=fun();
