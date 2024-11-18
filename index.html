@@ -1,0 +1,59 @@
+<!--- --->
+<html lang="en" dir="ltr">
+  <head>
+    <title>Hello! | Emir</title>
+    <link rel="icon" href="src/icon.ico">
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <script src="js/index.js"></script>
+  </head>
+  <body oncontextmenu="return false;"></body>
+
+    <div class="container">
+
+      <div id="sidebar">
+        <h1>Emir.</h1>
+        <img src="src/emir.png" alt="Profile Picture" id="profile">
+        <p>↪👤Emir</p>
+        <p>↪🎂15</p>
+        <p>↪🐈Mia</p>
+        <p>↪📍Turkey, Kütahya</p>
+        <p>↪🎯Software Developer</p>
+      </div>
+      
+
+      <div id="terminal">
+        <div id="injected"></div>
+        <div id="userInput">
+          <input type="text" value="visitor@terminal:$ ~" id="prompt" size = "14" readonly="readonly">
+          <input type="text" id="txtBox" onkeypress="commandProcessor(event)" placeholder="Try 'help'" size = "40" autofocus>
+        </div>
+      </div>
+
+      <div class="tooltip">
+        <button>Click  <a href="https://www.instagram.com/em1r.json" target="_blank">me 2 see who made this website</a></button>
+        <div class="tooltiptext">Em1r.json</div>
+      </div>
+             
+
+  </body>
+</html>
+
+<script>
+const image = document.getElementById('image');
+const speechBubble = document.getElementById('speechBubble');
+
+image.addEventListener('click', () => {
+  speechBubble.style.display = 'block';
+  setTimeout(() => {
+    speechBubble.style.display = 'none';
+  }, 7000); // Close after 7 seconds
+});
+
+speechBubble.addEventListener('click', () => {
+  speechBubble.style.display = 'none';
+});
+</script>
+
+

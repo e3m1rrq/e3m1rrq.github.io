@@ -1,0 +1,49 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Makine | e3m1rrq</title>
+    <link rel="icon" href="src/takla.png" type="image/x-icon">
+</head>
+<body>
+
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emir'in Cevap Makinesi</title>
+  <link rel="stylesheet" href="css\e-makine.css">
+  <style>
+    .sol-ust-kutucuk {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 30px;
+      height: 30px;
+      background-color: black;
+      cursor: pointer;
+      opacity: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="sol-ust-kutucuk" onclick="goToAnotherPage()"></div>
+    <h1>Emir'in Cevap Makinesi</h1>
+    <label for="commandInput">Komut Girin:</label>
+    <input type="text" id="commandInput">
+    <button id="executeBtn">Çalıştır</button>
+    <div class="output" id="output">
+      <p>Şu komutları deneyebilirsin --> yardım.</p>
+      <p>Büyük harf/küçük harf fark etmez.</p>
+      <p>Bu site tamamen e3m1rrq(Emir) tarafından yapılmıştır.</p>
+    </div>
+  </div>
+  <script src="js\e-makine.js"></script>
+  <script>
+    function goToAnotherPage() {
+      window.location.href = "e-secret.html"; 
+    }
+  </script>
+</body>
+</html>

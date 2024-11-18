@@ -1,0 +1,405 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Anasayfa | e3m1rrq</title>
+    <link rel="icon" href="src/takla.png" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css\e-giriş.css">
+</head>
+<body>
+
+<body>
+    <div class="container">
+        <h1>Hoş Geldiniz👋</h1>
+        <input type="password" id="password" placeholder="Şifre" onkeydown="handleEnter(event)">
+        <button class="neon-button" onclick="checkPassword()">Giriş Yap</button>
+        <div id="error-box"></div>
+        <div class="container">
+      <div id="retype-text">By e3m1rrq</div>
+        <button id="theme-button" onclick="toggleTheme()">🎨</button>
+    </div>
+    <script
+    src="js\e-giriş.js">
+    </script>
+</body>
+</html>
+
+<style>
+#error-box {
+    color: red;
+}
+<style>
+
+    <html>
+    <head>
+        </style>
+
+  <head>
+      <style>
+          #update-log {
+              position: absolute;
+              bottom: 10px;
+              left: 10px;
+              width: 350px;
+              height: 320px;
+              background-color: #3444;
+              border-radius: 10px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              display: none;
+              box-shadow: 0 0 10px #000;
+              border: 2px solid #000;
+              padding: 3px;
+              color: #fff;
+              font-family: Arial, sans-serif;
+              font-size: 14px;
+              line-height: 2;
+          }
+
+          #aç-kapa {
+            position: absolute;
+            top: 470px;
+            left: 545px;
+            padding: 10px;
+            background-color: transparent;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 0 10px #0d0d0d, 0 0 20px #0d0d0d, 0 0 30px #0d0d0d;
+                  }
+
+                  #aç-kapa:hover {
+                      background-color: #504d4d;
+                  }
+
+       #update-log {
+                   animation: showUpdateLog 0.9s ease-in-out;
+               }
+
+               @keyframes showUpdateLog {
+                   0% {
+                       bottom: -400px;
+                   }
+                   100% {
+                       bottom: 10px;
+                   }
+               }
+
+              </style>
+  </head>
+  <body>
+      <div id="update-log">
+          <h1>🔨Update Log📚</h1>
+          <ul>
+              <li>✅Update Log butonundaki animasyonlar kaldırıldı⛔</li>
+              <li>✅Anasayfa mobile uygun hale getirilmeye çalışılıyor📱</li>
+              <li>✅Update Log ve Market butonlarının yeri değiştirildi🧰</li>
+              <li>✅Gizli sayfa yenilendi❓❓</li>
+              <li>⏰12/08/2023 0.3V BETA Update⏰</li>
+              <li>⏰Mobil Uyumluluk Güncellemesi⏰</li>
+          </ul>
+      </div>
+
+      <button id="aç-kapa" onclick="toggleKutu()">👇Update Log👇</button>
+
+      <script>
+
+      function toggleTheme() {
+    var body = document.body;
+    var siyahYazi = document.getElementsByClassName("siyah-yazi")[0];
+
+    if (body.style.backgroundColor === "black") {
+        body.style.backgroundColor = "#383e92";
+        siyahYazi.style.color = "black";
+    } else {
+        body.style.backgroundColor = "black";
+        siyahYazi.style.color = "black";
+    }
+}
+
+var isKutuAcik = false;
+
+function toggleKutu() {
+    var kutu = document.getElementById("update-log");
+    var button = document.getElementById("aç-kapa");
+
+    if (!isKutuAcik) {
+        kutu.style.display = "block";
+        isKutuAcik = true;
+    } else {
+        kutu.style.display = "none";
+        isKutuAcik = false;
+    }
+}
+      </script>
+</body>
+</html>
+
+
+<style>
+#profil-foto {
+     position: absolute;
+     bottom: 0px;
+     right: 0px;
+     width: 50px;
+     height: 50px;
+     border-radius: 10%;
+     cursor: pointer;
+ }
+
+ #selam-yazi {
+     position: absolute;
+     bottom: 30px;
+     right: 75px;
+     color: white;
+     font-size: 20px;
+     font-weight: bold;
+     display: none;
+ }
+
+ #selam-yazi-kedi {
+           position: fixed;
+           bottom: 20px;
+           right: 75px;
+           color: white;
+           font-size: 20px;
+           font-weight: bold;
+           display: none;
+       }
+</style>
+</head>
+<body>
+
+<img id="profil-foto" src="src/kedi.png" alt="Profil Fotoğrafı" onclick="toggleSelamYazi()">
+
+<script>
+function toggleSelamYazi() {
+           var selamYazi = document.getElementById("selam-yazi-kedi");
+           selamYazi.style.display = "block";
+
+           setTimeout(function () {
+               selamYazi.style.display = "none";
+           }, 5000);
+       }
+       </script>
+
+<div id="selam-yazi-kedi">Mama yoksa şifre yok. Miyav!</div>
+
+<script>
+
+var isMamaAlindi = false;
+
+       function handleKediClick() {
+           var selamYazi = document.getElementById("selam-yazi");
+
+           if (isMamaAlindi) {
+               selamYazi.textContent = "Mama için teşekkürler! Şifre: pGBtyUU768. Miyav!";
+           } else {
+               selamYazi.textContent = "Mama yoksa şifre yok. Miyav!";
+           }
+
+           selamYazi.style.display = "block";
+
+           setTimeout(function () {
+               selamYazi.style.display = "none";
+           }, 2000);
+       }
+
+       function buyProduct(fiyat) {
+           if (cuzdanBakiye >= fiyat) {
+               cuzdanBakiye -= fiyat;
+               updateCuzdan();
+               isMamaAlindi = true;
+               alert("Ürün başarıyla satın alındı!");
+           } else {
+               alert("Yetersiz bakiye!");
+           }
+       }
+
+ function toggleSelamYazi() {
+     var selamYazi = document.getElementById("selam-yazi");
+     if (selamYazi.style.display === "block") {
+         selamYazi.style.display = "none";
+     } else {
+         selamYazi.style.display = "block";
+     }
+ }
+</script>
+</body>
+</html>
+
+<html>
+<head>
+    <style>
+
+        #market-kutu {
+            position: absolute;
+            top: 170px;
+            left: 375px;
+            width: 350px;
+            border-radius: 50px;
+            background-color: #656f84;
+            padding: 100px;
+            text-align: center;
+            display: none;
+
+        }
+
+        #cuzdan {
+            position: absolute;
+            bottom: 175px;
+            left: 430px;
+            width: 150px;
+            background-color: transparent;
+            padding: 10px;
+            display: none;
+        }
+
+        #show-market {
+            position: absolute;
+            top: 470px;
+            right: 550px;
+            padding: 10px;
+            background-color: transparent;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 0 10px #0d0d0d, 0 0 20px #0d0d0d, 0 0 30px #0d0d0d;
+        }
+
+        #show-market:hover {
+                      background-color: #504d4d;
+                  }
+    </style>
+</head>
+<body>
+
+    <button id="show-market" onclick="toggleMarket()">Market👈</button>
+
+    <style>
+
+        #market-kutu {
+            position: absolute;
+            top: center;
+            left: 420;
+            width: 450px;
+            border-radius: 50px;
+            background-color: #706aa8;
+            padding: 30px;
+        }
+
+        #market-kutu h1 {
+            font-size: 32px;
+            margin-bottom: 1px;
+        }
+
+    </style>
+
+
+    <div id="market-kutu">
+        <h1>🌌Galaksiler Arası Süper Market🛒</h1>
+        <ul>
+            <li>
+                <span><h2>Süper Kedi Maması</h2></span>
+                <button class="buy-button" onclick="buyProduct(20)">Satın Al (20$)</button>
+            </li>
+            <li>
+                <span><h2>Yakında...</h2></span>
+                <button class="buy-button" onclick=".">Yakında...</button>
+
+                <style>
+
+    .buy-button {
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 17px;
+        box-shadow: 0 0 10px #0d0d0d, 0 0 20px #0d0d0d, 0 0 30px #0d0d0d;
+    }
+
+    .buy-button:hover {
+        background-color: #45a049;
+    }
+</style>
+            </li>
+
+        </ul>
+        <button id="market-kapat" onclick="toggleMarket()">X</button>
+    </div>
+
+    <style>
+    #market-kapat {
+           position: absolute;
+           top: 0px;
+           right: 0px;
+           padding: 10px;
+           background-color: red;
+           color: white;
+           border: none;
+           border-radius: 40px;
+           cursor: pointer;
+           box-shadow: 0 0 10px #0d0d0d, 0 0 20px #0d0d0d, 0 0 30px #0d0d0d;
+       }
+       </style>
+
+    <div id="cuzdan">
+        <p>💲Bakiye: <span id="bakiye">75</span> Dolar</p>
+    </div>
+
+    <script>
+
+        var kedi = document.getElementById("profil-foto");
+        var cuzdanBakiye = 75;
+        var urun1Alindi = false;
+
+        function toggleMarket() {
+            var marketKutu = document.getElementById("market-kutu");
+            if (marketKutu.style.display === "block") {
+                marketKutu.style.display = "none";
+                cuzdan.style.display = "none";
+            } else {
+                marketKutu.style.display = "block";
+                cuzdan.style.display = "block";
+            }
+        }
+
+        function updateCuzdan() {
+            var bakiyeSpan = document.getElementById("bakiye");
+            bakiyeSpan.textContent = cuzdanBakiye;
+        }
+
+        function buyProduct(fiyat) {
+            if (cuzdanBakiye >= fiyat) {
+                cuzdanBakiye -= fiyat;
+                urun1Alindi = true;
+                updateCuzdan();
+                alert("Ürün başarıyla satın alındı!");
+            } else {
+                alert("Yetersiz bakiye!");
+            }
+        }
+
+        updateCuzdan();
+
+        kedi.addEventListener("click", function() {
+       if (urun1Alindi) {
+           document.getElementById("selam-yazi-kedi").textContent = "Mama için teşekkürler! Şifre: pGBtyUU768. Miyav!";
+       } else {
+           document.getElementById("selam-yazi-kedi").textContent = "Mama yoksa şifre yok. Miyav!";
+       }
+       document.getElementById("selam-yazi-kedi").style.display = "block";
+       setTimeout(function() {
+           document.getElementById("selam-yazi-kedi").style.display = "none";
+       }, 10000);
+   });
+
+        updateCuzdan();
+    </script>
+</body>
+</html>

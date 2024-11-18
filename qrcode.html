@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Kod Oluşturucu</title>
+    <link rel="stylesheet" href="css/qrcode.css">
+</head>
+<body>
+    <div class="container">
+        <p>"Enter Text📄 or Link🔗"</p>
+        <input type="text" placeholder="Text📄 or Link🔗" id="qrText">
+
+
+        <div id="imgbox">
+            <img src="" id="qrImage">
+        </div>
+        <button onclick="generateQR()">Create QR Code</button>
+        <a id="downloadLink" style="display: none;" download="qrcode.png">
+            <button class="download-button">Download📥</button>
+        </a>
+    </div> 
+
+    <script>
+
+        let imgbox = document.getElementById("imgbox");
+        let qrImage = document.getElementById("qrImage");
+        let qrText = document.getElementById("qrText");
+        let downloadLink = document.getElementById("downloadLink");
+
+        function generateQR()
+        { 
+            if(qrText.value.length > 0)
+            {
+                qrImage.src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + qrText.value;
+                imgbox.classList.add("show-img");
+                downloadLink.href = qrImage.src;
+                downloadLink.style.display = "inline-block";
+            }
+            else
+            {
+                qrText.classList.add('error');
+                setInterval(() => {
+                    qrText.classList.remove('error');
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
