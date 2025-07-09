@@ -244,6 +244,9 @@ function help(){
       }else if (txtInput == "serkan") {
         var win = window.open("car.html", '_blank');
         win.focus();
+       }else if (txtInput == "adisyon") {
+        var win = window.open("adisyon.html", '_blank');
+        win.focus();
       }else if (txtInput == "fun") {
         document.getElementById('injected').innerHTML=fun();
       }else if (txtInput == "roulette") {
