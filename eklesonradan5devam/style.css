@@ -1,0 +1,74 @@
+body {
+    font-family: sans-serif;
+    background-color: #f0f8ff;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.screen {
+    display: none;
+    width: 100%;
+    max-width: 400px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.screen.active {
+    display: block;
+}
+
+input, button {
+    width: 90%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.egg-container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.egg {
+    font-size: 50px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.egg:hover, .egg.selected {
+    transform: scale(1.2);
+}
+
+.error {
+    color: red;
+}
+
+/* Mobil için Media Query */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    .screen {
+        padding: 15px;
+    }
+}

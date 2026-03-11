@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evcil Hayvan Macerası</title>
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- GİRİŞ/KAYIT EKRANI -->
+    <div id="auth-screen" class="screen active">
+        <div class="screen-content">
+            <h2>Hoş Geldin!</h2>
+            <p class="subtitle">Maceraya başlamak için giriş yap veya yeni bir hesap oluştur.</p>
+            <input type="text" id="username-input" placeholder="Kullanıcı Adı">
+            <input type="password" id="password-input" placeholder="Şifre">
+            <button id="login-btn" class="btn-primary">Giriş Yap</button>
+            <button id="register-btn" class="btn-secondary">Kayıt Ol</button>
+            <p id="auth-error" class="error"></p>
+        </div>
+    </div>
+
+    <!-- ANA EKRAN / LOBİ -->
+    <div id="main-menu-screen" class="screen">
+        <div class="screen-content">
+            <h1>Merhaba, <span id="player-username"></span>!</h1>
+            <button id="create-party-btn" class="btn-primary">Yeni Parti Oluştur</button>
+            <p>veya</p>
+            <input type="text" id="join-code-input" placeholder="Davet Kodu Gir">
+            <button id="join-with-code-btn" class="btn-secondary">Koda Katıl</button>
+            <hr>
+            <div id="notifications">
+                 <!-- Davetler buraya JS ile eklenecek -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- PARTİ BEKLEME EKRANI -->
+    <div id="party-lobby-screen" class="screen">
+        <div class="screen-content">
+            <h2>Parti Lobisi</h2>
+            <p class="subtitle">Arkadaşın katıldığında oyun başlayacak.</p>
+            <div class="party-code-container">
+                <p>Parti Kodu:</p>
+                <b id="party-code"></b>
+            </div>
+            <p><strong>Oyuncular:</strong></p>
+            <ul id="player-list"></ul>
+            <input type="text" id="invite-username-input" placeholder="Kullanıcı adıyla davet et">
+            <button id="invite-btn" class="btn-secondary">Davet Gönder</button>
+            <p id="party-status"></p>
+        </div>
+    </div>
+
+    <!-- OYUN EKRANI -->
+    <div id="game-screen" class="screen">
+        <!-- Yumurta Seçim Aşaması -->
+        <div id="egg-selection-phase" class="phase-container">
+            <h2>Bir Yumurta Seçin!</h2>
+            <p class="subtitle">Oyun <span id="vote-timer">10</span> saniye içinde başlayacak.</p>
+            <div class="egg-container">
+                <div class="egg" data-egg="egg1">🥚</div>
+                <div class="egg" data-egg="egg2">🥚</div>
+                <div class="egg" data-egg="egg3">🥚</div>
+            </div>
+            <button id="cancel-vote-btn" class="btn-tertiary" style="display: none;">Seçimi İptal Et</button>
+        </div>
+
+        <!-- Evcil Hayvan Bakım Aşaması (Yeni Grid Düzeni) -->
+        <div id="pet-care-phase" class="phase-container pet-care-grid" style="display: none;">
+            
+            <div class="pet-info-area">
+                <h2 id="pet-name">Evcil Hayvan</h2>
+                <p>Cüzdanın: <span id="player-money">0</span> TL</p>
+                <div class="turn-info">Sıradaki: <b id="turn-player">...</b> (Hamle: <b id="actions-left">0</b>)</div>
+            </div>
+        
+            <div class="pet-visual-area">
+                <div id="pet-image">
+                    <!-- Pet image will be inserted here by JS -->
+                </div>
+                <button id="info-btn" class="btn-secondary">İstatistikler</button>
+            </div>
+        
+            <div class="market-area card">
+                <h3>🛒 Market</h3>
+                <button class="buy-food" data-price="10">Ucuz Mama (10 TL)</button>
+                <button class="buy-food" data-price="50">Orta Mama (50 TL)</button>
+                <button class="buy-food" data-price="100">Kaliteli Mama (100 TL)</button>
+            </div>
+        
+            <!-- Bu kart, İstatistikler butonuna tıklandığında gösterilecek -->
+            <div id="pet-stats" class="stats-card" style="display:none;">
+                <!-- İstatistikler buraya JS ile eklenecek -->
+                <hr>
+                <div id="kick-section">
+                     <p id="kick-status" class="subtitle" style="display:none; margin-top:0;"></p>
+                     <button id="kick-pet-btn" class="btn-danger">Evcil Hayvanı Kov</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <!-- JavaScript Modülünü Yükle -->
+    <script type="module" src="app.js"></script>
+</body>
+</html>
+
