@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2. El Dükkan Simülatörü</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+        }
+
+        body.dark-theme {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            max-height: 800px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .dark-theme .container {
+            background: #1a1a1a;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .dark-theme .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .dark-theme .content {
+            color: white;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button.secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            box-shadow: 0 5px 15px rgba(149, 165, 166, 0.3);
+        }
+
+        .button.danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .save-slot {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .dark-theme .save-slot {
+            background: #2d3436;
+            border-color: #636e72;
+        }
+
+        .save-slot:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .save-info {
+            margin-bottom: 15px;
+        }
+
+        .save-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .save-details {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .dark-theme .save-details {
+            color: #b2bec3;
+        }
+
+        .slot-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .slot-buttons .button {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px 15px;
+            font-size: 14px;
+        }
+
+        .settings-group {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+        }
+
+        .dark-theme .settings-group {
+            background: #2d3436;
+            border-color: #636e72;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .setting-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .setting-label {
+            font-weight: bold;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #ccc;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: #667eea;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active::after {
+            left: 33px;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            background: #ddd;
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .dark-theme .slider {
+            background: #636e72;
+        }
+
+        .credits-container {
+            text-align: center;
+            height: 300px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .credits-text {
+            position: absolute;
+            width: 100%;
+            animation: scrollCredits 15s linear infinite;
+        }
+
+        @keyframes scrollCredits {
+            0% { transform: translateY(300px); }
+            100% { transform: translateY(-200px); }
+        }
+
+        .phone-container {
+            width: 90%;
+            max-width: 320px;
+            aspect-ratio: 9/16;
+            background: #2c3e50;
+            border-radius: 30px;
+            padding: 20px;
+            margin: 20px auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phone-header {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            text-align: center;
+            color: white;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            flex: 1;
+            align-content: center;
+        }
+
+        .app-icon {
+            aspect-ratio: 1;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .app-icon:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .app-emoji {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .app-name {
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .game-stats {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 15px;
+            margin: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .stat-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .day-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 30px 50px;
+            border-radius: 20px;
+            font-size: 36px;
+            font-weight: bold;
+            z-index: 1000;
+            opacity: 0;
+            animation: dayNotification 2s ease-in-out;
+        }
+
+        @keyframes dayNotification {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 350px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .dark-theme .modal-content {
+            background: #2d3436;
+            color: white;
+        }
+
+        .item-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .dark-theme .item-card {
+            background: #2d3436;
+            border-left-color: #74b9ff;
+        }
+
+        .item-card:hover {
+            transform: translateX(5px);
+        }
+
+        .rarity-common { border-left-color: #95a5a6; }
+        .rarity-rare { border-left-color: #3498db; }
+        .rarity-epic { border-left-color: #9b59b6; }
+        .rarity-mysterious { border-left-color: #e67e22; }
+        .rarity-legendary { border-left-color: #f39c12; }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 5px;
+            transition: all 0.5s ease;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                border-radius: 0;
+                max-height: none;
+                height: 100vh;
+            }
+            
+            .slot-buttons {
+                flex-direction: column;
+            }
+            
+            .slot-buttons .button {
+                min-width: auto;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .character-image {
+            width: 150px;
+            height: 200px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            border: 3px solid #667eea;
+        }
+
+        .shop-image {
+            width: 100%;
+            height: 120px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            border: 2px solid #e9ecef;
+        }
+
+        .customer-avatar {
+            width: 60px;
+            height: 60px;
+            background: #f8f9fa;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-right: 15px;
+        }
+
+        .negotiation-panel {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 20px;
+            margin: 20px 0;
+        }
+
+        .dark-theme .negotiation-panel {
+            background: rgba(45, 52, 54, 0.95);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Ana Menü -->
+        <div class="screen active" id="main-menu">
+            <div class="header">
+                <div class="title">2. El Dükkan Simülatörü</div>
+                <div class="subtitle">Kendi dükkanını kur ve büyüt!</div>
+            </div>
+            <div class="content">
+                <button class="button" onclick="showScreen('save-select')">Başla</button>
+                <button class="button secondary" onclick="showScreen('settings')">Ayarlar</button>
+                <button class="button secondary" onclick="showScreen('credits')">Credits</button>
+            </div>
+        </div>
+
+        <!-- Kayıt Seçim Ekranı -->
+        <div class="screen" id="save-select">
+            <div class="header">
+                <div class="title">Kayıt Seçimi</div>
+                <div class="subtitle">Bir kayıt slotu seçin</div>
+                <button class="back-button" onclick="showScreen('main-menu')">← Geri</button>
+            </div>
+            <div class="content" id="save-slots-container">
+                <!-- Kayıt slotları buraya dinamik olarak eklenecek -->
+            </div>
+        </div>
+
+        <!-- Ayarlar Ekranı -->
+        <div class="screen" id="settings">
+            <div class="header">
+                <div class="title">Ayarlar</div>
+                <div class="subtitle">Oyun tercihlerini düzenle</div>
+                <button class="back-button" onclick="showScreen('main-menu')">← Geri</button>
+            </div>
+            <div class="content">
+                <div class="settings-group">
+                    <div class="setting-item">
+                        <span class="setting-label">Ses Seviyesi</span>
+                        <input type="range" class="slider" min="0" max="100" value="50" id="volume-slider">
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label">Koyu Tema</span>
+                        <div class="toggle-switch" id="theme-toggle" onclick="toggleTheme()"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Credits Ekranı -->
+        <div class="screen" id="credits">
+            <div class="header">
+                <div class="title">Credits</div>
+                <div class="subtitle">Geliştiriciler</div>
+                <button class="back-button" onclick="showScreen('main-menu')">← Geri</button>
+            </div>
+            <div class="content">
+                <div class="credits-container">
+                    <div class="credits-text">
+                        <h2>2. El Dükkan Simülatörü</h2>
+                        <br><br>
+                        <strong>Game Design & Development</strong><br>
+                        Claude AI Assistant<br><br>
+                        
+                        <strong>Concept & Ideas</strong><br>
+                        Oyun Tutkunu Kullanıcı<br><br>
+                        
+                        <strong>Special Thanks</strong><br>
+                        Tüm ikinci el dükkan sahipleri<br>
+                        Antikacı dedeler<br>
+                        Pazarlıkçı teyzeler<br>
+                        Teknoloji tutkunları<br><br>
+                        
+                        <strong>Technologies Used</strong><br>
+                        HTML5, CSS3, JavaScript<br>
+                        LocalStorage API<br>
+                        Mobile-First Design<br><br>
+                        
+                        <strong>Version</strong><br>
+                        v1.0.0 - 2025<br><br>
+                        
+                        Teşekkürler!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Oyun Ekranı -->
+        <div class="screen" id="game">
+            <div class="phone-container">
+                <div class="phone-screen">
+                    <div class="phone-header">
+                        <strong id="current-day">GÜN 1</strong>
+                        <button class="back-button" onclick="showScreen('main-menu')" style="position: absolute; top: 10px; right: 15px; padding: 5px 10px; font-size: 12px;">Çıkış</button>
+                    </div>
+                    
+                    <div class="game-stats">
+                        <div class="stat-row">
+                            <span>💰 Para:</span>
+                            <span id="money">1000 TL</span>
+                        </div>
+                        <div class="stat-row">
+                            <span>🏪 Dükkan Seviye:</span>
+                            <span id="shop-level">1</span>
+                        </div>
+                        <div class="stat-row">
+                            <span>⭐ Prestij:</span>
+                            <span id="prestige">0</span>
+                        </div>
+                    </div>
+
+                    <div class="app-grid">
+                        <div class="app-icon" onclick="openApp('shop')">
+                            <div class="app-emoji">🏪</div>
+                            <div class="app-name">Mağaza</div>
+                        </div>
+                        <div class="app-icon" onclick="openApp('business')">
+                            <div class="app-emoji">📊</div>
+                            <div class="app-name">Dükkan</div>
+                        </div>
+                        <div class="app-icon" onclick="openApp('character')">
+                            <div class="app-emoji">👤</div>
+                            <div class="app-name">Profil</div>
+                        </div>
+                        <div class="app-icon" onclick="openApp('search')">
+                            <div class="app-emoji">🔍</div>
+                            <div class="app-name">Arama</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content" id="modal-content">
+            <!-- Modal içeriği buraya dinamik olarak eklenecek -->
+        </div>
+    </div>
+
+    <script>
+        // Oyun Verileri ve Durumu
+        let gameData = {
+            currentDay: 1,
+            money: 1000,
+            shopLevel: 1,
+            prestige: 0,
+            character: {
+                charisma: 5,
+                negotiation: 5,
+                priceKnowledge: 5,
+                bargaining: 5
+            },
+            inventory: [],
+            shopUpgrades: {
+                cleanliness: 1,
+                attractiveness: 1,
+                advertising: 1
+            },
+            settings: {
+                volume: 50,
+                darkTheme: false
+            }
+        };
+
+        // Ürün veritabanı
+        const itemDatabase = [
+            // Sıradan ürünler
+            { name: "Eski Radyo", rarity: "common", basePrice: 50, category: "elektronik" },
+            { name: "Plastik Sandalye", rarity: "common", basePrice: 30, category: "mobilya" },
+            { name: "Mutfak Bıçağı", rarity: "common", basePrice: 20, category: "mutfak" },
+            
+            // Ender ürünler
+            { name: "Vintage Fotoğraf Makinesi", rarity: "rare", basePrice: 150, category: "elektronik" },
+            { name: "Antika Masa Lambası", rarity: "rare", basePrice: 120, category: "dekorasyon" },
+            
+            // Destansı ürünler
+            { name: "1950'ler Jukebox", rarity: "epic", basePrice: 500, category: "elektronik" },
+            { name: "Osmanlı Dönemi Halısı", rarity: "epic", basePrice: 800, category: "antika" },
+            
+            // Gizemli ürünler
+            { name: "Şifreli Eski Defter", rarity: "mysterious", basePrice: 300, category: "kitap" },
+            { name: "Bilinmeyen Taş Heykel", rarity: "mysterious", basePrice: 450, category: "sanat" },
+            
+            // Efsanevi ürünler
+            { name: "Napolyon'un Kılıcı (Replica)", rarity: "legendary", basePrice: 2000, category: "antika" },
+            { name: "Tesla'nın Deneyim Notları", rarity: "legendary", basePrice: 5000, category: "kitap" }
+        ];
+
+        // Müşteri tipleri
+        const customerTypes = [
+            { name: "Antikacı Dede", emoji: "👴", preference: "antika", haggling: 0.7 },
+            { name: "Pazarlıkçı Teyze", emoji: "👵", preference: "mutfak", haggling: 0.5 },
+            { name: "Teknoloji Tutkunu", emoji: "🧑‍💻", preference: "elektronik", haggling: 0.8 },
+            { name: "Koleksiyoncu", emoji: "🕵️", preference: "sanat", haggling: 0.9 },
+            { name: "Genç Çift", emoji: "👫", preference: "mobilya", haggling: 0.6 }
+        ];
+
+        // LocalStorage yerine bellek içi veri saklama (Claude.ai sınırlaması nedeniyle)
+        let memoryStorage = {};
+
+        function saveToStorage(key, data) {
+            try {
+                // localStorage.setItem(key, JSON.stringify(data));
+                memoryStorage[key] = JSON.stringify(data);
+            } catch (e) {
+                console.warn("Veri kaydedilemedi:", e);
+            }
+        }
+
+        function loadFromStorage(key) {
+            try {
+                // return JSON.parse(localStorage.getItem(key));
+                return memoryStorage[key] ? JSON.parse(memoryStorage[key]) : null;
+            } catch (e) {
+                console.warn("Veri yüklenemedi:", e);
+                return null;
+            }
+        }
+
+        // Ekran yönetimi
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+            
+            if (screenId === 'save-select') {
+                loadSaveSlots();
+            }
+        }
+
+        // Kayıt slotlarını yükleme
+        function loadSaveSlots() {
+            const container = document.getElementById('save-slots-container');
+            container.innerHTML = '';
+
+            for (let i = 1; i <= 3; i++) {
+                const saveData = loadFromStorage(`save_${i}`);
+                const slotDiv = document.createElement('div');
+                slotDiv.className = 'save-slot fade-in';
+
+                if (saveData) {
+                    slotDiv.innerHTML = `
+                        <div class="save-info">
+                            <div class="save-name">Kayıt ${i}</div>
+                            <div class="save-details">
+                                Gün ${saveData.currentDay} • ${saveData.money} TL • Seviye ${saveData.shopLevel}
+                            </div>
+                        </div>
+                        <div class="slot-buttons">
+                            <button class="button" onclick="loadGame(${i})">Devam Et</button>
+                            <button class="button danger" onclick="deleteSave(${i})">Sil</button>
+                        </div>
+                    `;
+                } else {
+                    slotDiv.innerHTML = `
+                        <div class="save-info">
+                            <div class="save-name">Boş Slot ${i}</div>
+                            <div class="save-details">Yeni oyun başlat</div>
+                        </div>
+                        <div class="slot-buttons">
+                            <button class="button" onclick="newGame(${i})">Kayıt Oluştur</button>
+                        </div>
+                    `;
+                }
+
+                container.appendChild(slotDiv);
+            }
+        }
+
+        // Yeni oyun başlatma
+        function newGame(slot) {
+            gameData = {
+                currentDay: 1,
+                money: 1000,
+                shopLevel: 1,
+                prestige: 0,
+                character: {
+                    charisma: 5,
+                    negotiation: 5,
+                    priceKnowledge: 5,
+                    bargaining: 5
+                },
+                inventory: [],
+                shopUpgrades: {
+                    cleanliness: 1,
+                    attractiveness: 1,
+                    advertising: 1
+                },
+                settings: {
+                    volume: 50,
+                    darkTheme: false
+                }
+            };
+
+            saveGame(slot);
+            updateGameUI();
+            showScreen('game');
+            showDayNotification(1);
+        }
+
+        // Oyun yükleme
+        function loadGame(slot) {
+            const saveData = loadFromStorage(`save_${slot}`);
+            if (saveData) {
+                gameData = saveData;
+                updateGameUI();
+                showScreen('game');
+            }
+        }
+
+        // Kayıt silme
+        function deleteSave(slot) {
+            if (confirm('Bu kaydı silmek istediğinizden emin misiniz?')) {
+                // localStorage.removeItem(`save_${slot}`);
+                delete memoryStorage[`save_${slot}`];
+                loadSaveSlots();
+            }
+        }
+
+        // Oyun kaydetme
+        function saveGame(slot) {
+            saveToStorage(`save_${slot}`, gameData);
+        }
+
+        // Tema değiştirme
+        function toggleTheme() {
+            const toggle = document.getElementById('theme-toggle');
+            const body = document.body;
+            
+            if (body.classList.contains('dark-theme')) {
+                body.classList.remove('dark-theme');
+                toggle.classList.remove('active');
+                gameData.settings.darkTheme = false;
+            } else {
+                body.classList.add('dark-theme');
+                toggle.classList.add('active');
+                gameData.settings.darkTheme = true;
+            }
+        }
+
+        // Gün bildirimi gösterme
+        function showDayNotification(day) {
+            const notification = document.createElement('div');
+            notification.className = 'day-notification';
+            notification.textContent = `GÜN ${day}`;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 2000);
+        }
+
+        // Oyun arayüzünü güncelleme
+        function updateGameUI() {
+            document.getElementById('current-day').textContent = `GÜN ${gameData.currentDay}`;
+            document.getElementById('money').textContent = `${gameData.money} TL`;
+            document.getElementById('shop-level').textContent = gameData.shopLevel;
+            document.getElementById('prestige').textContent = gameData.prestige;
+        }
+
+        // Modal gösterme
+        function showModal(content) {
+            document.getElementById('modal-content').innerHTML = content;
+            document.getElementById('modal').classList.add('active');
+        }
+
+        // Modal kapatma
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        // Modal dışına tıklandığında kapatma
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Uygulama açma
+        function openApp(appType) {
+            switch(appType) {
+                case 'shop':
+                    openShopApp();
+                    break;
+                case 'business':
+                    openBusinessApp();
+                    break;
+                case 'character':
+                    openCharacterApp();
+                    break;
+                case 'search':
+                    openSearchApp();
+                    break;
+            }
+        }
+
+        // Mağaza uygulaması
+        function openShopApp() {
+            const shopItems = [
+                { name: "Temizlik Malzemeleri", price: 100, type: "cleanliness", description: "Dükkanın temizliğini artırır" },
+                { name: "LED Aydınlatma", price: 200, type: "attractiveness", description: "Dükkanın çekiciliğini artırır" },
+                { name: "Sosyal Medya Reklamı", price: 150, type: "advertising", description: "Müşteri sayısını artırır" },
+                { name: "Dükkan Genişletme", price: 1000, type: "upgrade", description: "Dükkan seviyesini artırır" }
+            ];
+
+            let content = `
+                <h2>🏪 Mağaza</h2>
+                <p>Dükkanını geliştirmek için ürünler satın al</p>
+                <div style="max-height: 400px; overflow-y: auto;">
+            `;
+
+            shopItems.forEach((item, index) => {
+                const canAfford = gameData.money >= item.price;
+                content += `
+                    <div class="item-card ${canAfford ? '' : 'opacity: 0.5;'}">
+                        <h4>${item.name}</h4>
+                        <p>${item.description}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <strong>${item.price} TL</strong>
+                            <button class="button" 
+                                    ${canAfford ? `onclick="buyShopItem('${item.type}', ${item.price}, '${item.name}')"` : 'disabled'}>
+                                ${canAfford ? 'Satın Al' : 'Yetersiz Para'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            content += `
+                </div>
+                <button class="button secondary" onclick="closeModal()">Kapat</button>
+            `;
+
+            showModal(content);
+        }
+
+        // Mağaza ürünü satın alma
+        function buyShopItem(type, price, name) {
+            if (gameData.money >= price) {
+                gameData.money -= price;
+                
+                if (type === 'upgrade') {
+                    gameData.shopLevel++;
+                    gameData.prestige += 10;
+                } else {
+                    gameData.shopUpgrades[type]++;
+                }
+
+                updateGameUI();
+                closeModal();
+                
+                setTimeout(() => {
+                    alert(`${name} başarıyla satın alındı!`);
+                    nextDay();
+                }, 100);
+            }
+        }
+
+        // İş uygulaması
+        function openBusinessApp() {
+            const shopImages = ['🏚️', '🏪', '🏬', '🏢', '🌟'];
+            const shopDescriptions = [
+                'Yıkık dökük dükkan',
+                'Temiz küçük dükkan', 
+                'Modern orta dükkan',
+                'Büyük ve şık dükkan',
+                'Lüks antika mağazası'
+            ];
+
+            let content = `
+                <h2>📊 Dükkan Durumu</h2>
+                <div class="character-image">${shopImages[gameData.shopLevel - 1]}</div>
+                <p><strong>${shopDescriptions[gameData.shopLevel - 1]}</strong></p>
+                
+                <div class="item-card">
+                    <h4>Dükkan Özellikleri</h4>
+                    <div class="stat-row">
+                        <span>Temizlik:</span>
+                        <span>Seviye ${gameData.shopUpgrades.cleanliness}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${gameData.shopUpgrades.cleanliness * 20}%"></div>
+                    </div>
+                    
+                    <div class="stat-row">
+                        <span>Çekicilik:</span>
+                        <span>Seviye ${gameData.shopUpgrades.attractiveness}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${gameData.shopUpgrades.attractiveness * 20}%"></div>
+                    </div>
+                    
+                    <div class="stat-row">
+                        <span>Reklam:</span>
+                        <span>Seviye ${gameData.shopUpgrades.advertising}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${gameData.shopUpgrades.advertising * 20}%"></div>
+                    </div>
+                </div>
+
+                <div class="slot-buttons">
+                    <button class="button" onclick="findCustomer()">Müşteri Ara</button>
+                    <button class="button secondary" onclick="manageBusiness()">İş Yönetimi</button>
+                </div>
+                
+                <button class="button secondary" onclick="closeModal()">Kapat</button>
+            `;
+
+            showModal(content);
+        }
+
+        // Karakter uygulaması
+        function openCharacterApp() {
+            let content = `
+                <h2>👤 Karakter Profili</h2>
+                <div class="character-image">🧑‍💼</div>
+                <p><strong>İkinci El Dükkan Sahibi</strong></p>
+                
+                <div class="item-card">
+                    <h4>Kişisel Özellikler</h4>
+                    <div class="stat-row">
+                        <span>Karizma:</span>
+                        <span>${gameData.character.charisma}/10</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${gameData.character.charisma * 10}%"></div>
+                    </div>
+                    
+                    <div class="stat-row">
+                        <span>İkna Kabiliyeti:</span>
+                        <span>${gameData.character.negotiation}/10</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${gameData.character.negotiation * 10}%"></div>
+                    </div>
+                    
+                    <div class="stat-row">
+                        <span>Fiyat Bilgisi:</span>
+                        <span>${gameData.character.priceKnowledge}/10</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${gameData.character.priceKnowledge * 10}%"></div>
+                    </div>
+                    
+                    <div class="stat-row">
+                        <span>Pazarlık Yeteneği:</span>
+                        <span>${gameData.character.bargaining}/10</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${gameData.character.bargaining * 10}%"></div>
+                    </div>
+                </div>
+
+                <div class="slot-buttons">
+                    <button class="button" onclick="upgradeCharacter()">Yetenekleri Geliştir</button>
+                    <button class="button secondary" onclick="showInventory()">Envanter</button>
+                </div>
+                
+                <button class="button secondary" onclick="closeModal()">Kapat</button>
+            `;
+
+            showModal(content);
+        }
+
+        // Arama uygulaması
+        function openSearchApp() {
+            let content = `
+                <h2>🔍 Arama</h2>
+                <p>Hile kodları ve gizli özellikler için arama yapın</p>
+                
+                <div class="item-card">
+                    <input type="text" id="search-input" placeholder="Arama yapın..." 
+                           style="width: 100%; padding: 10px; border: 2px solid #e9ecef; border-radius: 10px; font-size: 16px; margin-bottom: 15px;">
+                    <button class="button" onclick="performSearch()">Ara</button>
+                </div>
+
+                <div id="search-results" style="margin-top: 20px;">
+                    <p><em>İpucu: "para", "seviye", "prestij" gibi kelimeler deneyin...</em></p>
+                </div>
+                
+                <button class="button secondary" onclick="closeModal()">Kapat</button>
+            `;
+
+            showModal(content);
+        }
+
+        // Arama fonksiyonu
+        function performSearch() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const resultsDiv = document.getElementById('search-results');
+            
+            const cheatCodes = {
+                'para': 'MONEY_BOOST: 500 TL bonus!',
+                'seviye': 'LEVEL_UP: Dükkan seviyesi artırıldı!',
+                'prestij': 'PRESTIGE_BONUS: 25 prestij puanı!',
+                'yetenek': 'SKILL_BOOST: Tüm yetenekler +1!',
+                'müşteri': 'VIP_CUSTOMER: Özel müşteri geldi!',
+                'antika': 'RARE_FIND: Nadir antika bulundu!',
+                'şans': 'LUCKY_DAY: Bugün şanslı gününüz!'
+            };
+
+            let found = false;
+            for (let code in cheatCodes) {
+                if (searchTerm.includes(code)) {
+                    resultsDiv.innerHTML = `<div class="item-card rarity-legendary"><strong>Hile Kodu Bulundu!</strong><br>${cheatCodes[code]}</div>`;
+                    applyCheaT(code);
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                resultsDiv.innerHTML = '<p>Sonuç bulunamadı. Farklı kelimeler deneyin...</p>';
+            }
+        }
+
+        // Hile kodlarını uygulama
+        function applyCheaT(cheatType) {
+            switch(cheatType) {
+                case 'para':
+                    gameData.money += 500;
+                    break;
+                case 'seviye':
+                    gameData.shopLevel = Math.min(5, gameData.shopLevel + 1);
+                    break;
+                case 'prestij':
+                    gameData.prestige += 25;
+                    break;
+                case 'yetenek':
+                    gameData.character.charisma = Math.min(10, gameData.character.charisma + 1);
+                    gameData.character.negotiation = Math.min(10, gameData.character.negotiation + 1);
+                    gameData.character.priceKnowledge = Math.min(10, gameData.character.priceKnowledge + 1);
+                    gameData.character.bargaining = Math.min(10, gameData.character.bargaining + 1);
+                    break;
+            }
+            updateGameUI();
+        }
+
+        // Müşteri bulma
+        function findCustomer() {
+            const customer = customerTypes[Math.floor(Math.random() * customerTypes.length)];
+            const items = generateRandomItems(3);
+            
+            let content = `
+                <h2>🤝 Müşteri Geldi!</h2>
+                <div style="display: flex; align-items: center; margin: 20px 0;">
+                    <div class="customer-avatar">${customer.emoji}</div>
+                    <div>
+                        <h3>${customer.name}</h3>
+                        <p>Şu ürünlerle ilgileniyor...</p>
+                    </div>
+                </div>
+
+                <div style="max-height: 300px; overflow-y: auto;">
+            `;
+
+            items.forEach((item, index) => {
+                const rarityClass = `rarity-${item.rarity}`;
+                content += `
+                    <div class="item-card ${rarityClass}">
+                        <h4>${item.name}</h4>
+                        <div class="stat-row">
+                            <span>Kondisyon: ${item.condition}%</span>
+                            <span>Fiyat: ${item.price} TL</span>
+                        </div>
+                        <button class="button" onclick="negotiateItem(${index}, '${customer.name}', ${customer.haggling})">
+                            Pazarlık Et
+                        </button>
+                    </div>
+                `;
+            });
+
+            content += `
+                </div>
+                <button class="button secondary" onclick="closeModal()">Müşteriyi Gönder</button>
+            `;
+
+            showModal(content);
+            window.currentCustomerItems = items;
+        }
+
+        // Rastgele ürün üretme
+        function generateRandomItems(count) {
+            const items = [];
+            for (let i = 0; i < count; i++) {
+                const template = itemDatabase[Math.floor(Math.random() * itemDatabase.length)];
+                const condition = Math.floor(Math.random() * 100) + 1;
+                const priceMultiplier = condition / 100;
+                
+                items.push({
+                    ...template,
+                    condition: condition,
+                    price: Math.floor(template.basePrice * priceMultiplier * (0.8 + Math.random() * 0.4))
+                });
+            }
+            return items;
+        }
+
+        // Pazarlık sistemi
+        function negotiateItem(itemIndex, customerName, hagglingSkill) {
+            const item = window.currentCustomerItems[itemIndex];
+            const playerSkill = (gameData.character.negotiation + gameData.character.bargaining) / 20;
+            
+            let content = `
+                <h2>💬 Pazarlık</h2>
+                <div class="negotiation-panel">
+                    <h3>${customerName} ile ${item.name} için pazarlık ediyorsunuz</h3>
+                    <div class="stat-row">
+                        <span>Müşteri Teklifi:</span>
+                        <span>${item.price} TL</span>
+                    </div>
+                    <p>Ne yapmak istiyorsunuz?</p>
+                    
+                    <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+                        <button class="button" onclick="negotiationChoice('accept', ${itemIndex}, ${item.price})">
+                            Teklifi Kabul Et
+                        </button>
+                        <button class="button secondary" onclick="negotiationChoice('counter', ${itemIndex}, ${Math.floor(item.price * 1.2)})">
+                            Karşı Teklif Ver (${Math.floor(item.price * 1.2)} TL)
+                        </button>
+                        <button class="button secondary" onclick="negotiationChoice('charm', ${itemIndex}, ${Math.floor(item.price * (1.1 + playerSkill * 0.2))})">
+                            Karizma Kullan (${Math.floor(item.price * (1.1 + playerSkill * 0.2))} TL)
+                        </button>
+                        <button class="button danger" onclick="negotiationChoice('refuse', ${itemIndex}, 0)">
+                            Satışı Reddet
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            showModal(content);
+        }
+
+        // Pazarlık seçimi
+        function negotiationChoice(choice, itemIndex, finalPrice) {
+            const item = window.currentCustomerItems[itemIndex];
+            let success = false;
+            let message = '';
+
+            switch(choice) {
+                case 'accept':
+                    success = true;
+                    message = `${item.name} ${finalPrice} TL'ye satıldı!`;
+                    break;
+                case 'counter':
+                    success = Math.random() > 0.5;
+                    message = success ? 
+                        `Müşteri karşı teklifinizi kabul etti! ${finalPrice} TL kazandınız.` :
+                        'Müşteri teklifinizi reddetti ve gitti.';
+                    break;
+                case 'charm':
+                    const charmChance = gameData.character.charisma / 10;
+                    success = Math.random() < charmChance;
+                    message = success ? 
+                        `Karizma ile müşteriyi ikna ettiniz! ${finalPrice} TL kazandınız.` :
+                        'Karizma hilesi işe yaramadı, müşteri gitti.';
+                    break;
+                case 'refuse':
+                    success = false;
+                    message = 'Satışı reddettiniz.';
+                    break;
+            }
+
+            if (success && choice !== 'refuse') {
+                gameData.money += finalPrice;
+                gameData.prestige += Math.floor(finalPrice / 100);
+                
+                // Karakter gelişimi
+                if (Math.random() < 0.3) {
+                    const skills = ['charisma', 'negotiation', 'priceKnowledge', 'bargaining'];
+                    const randomSkill = skills[Math.floor(Math.random() * skills.length)];
+                    if (gameData.character[randomSkill] < 10) {
+                        gameData.character[randomSkill]++;
+                        message += ` ${randomSkill} yeteneğiniz arttı!`;
+                    }
+                }
+            }
+
+            updateGameUI();
+            closeModal();
+            
+            setTimeout(() => {
+                alert(message);
+                if (success) {
+                    nextDay();
+                }
+            }, 100);
+        }
+
+        // Sonraki güne geçiş
+        function nextDay() {
+            gameData.currentDay++;
+            showDayNotification(gameData.currentDay);
+            updateGameUI();
+            
+            // Otomatik kayıt (mevcut slot bulunursa)
+            for (let i = 1; i <= 3; i++) {
+                if (loadFromStorage(`save_${i}`)) {
+                    saveGame(i);
+                    break;
+                }
+            }
+        }
+
+        // Karakter geliştirme
+        function upgradeCharacter() {
+            let content = `
+                <h2>⬆️ Karakter Geliştirme</h2>
+                <p>Yeteneklerinizi geliştirmek için para harcayın</p>
+                
+                <div style="max-height: 400px; overflow-y: auto;">
+            `;
+
+            const skills = {
+                charisma: { name: 'Karizma', cost: 200 },
+                negotiation: { name: 'İkna Kabiliyeti', cost: 250 },
+                priceKnowledge: { name: 'Fiyat Bilgisi', cost: 180 },
+                bargaining: { name: 'Pazarlık Yeteneği', cost: 220 }
+            };
+
+            for (let skill in skills) {
+                const current = gameData.character[skill];
+                const canUpgrade = current < 10 && gameData.money >= skills[skill].cost;
+                
+                content += `
+                    <div class="item-card">
+                        <h4>${skills[skill].name}</h4>
+                        <div class="stat-row">
+                            <span>Mevcut: ${current}/10</span>
+                            <span>Maliyet: ${skills[skill].cost} TL</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${current * 10}%"></div>
+                        </div>
+                        <button class="button" 
+                                ${canUpgrade ? `onclick="upgradeSkill('${skill}', ${skills[skill].cost})"` : 'disabled'}>
+                            ${canUpgrade ? 'Geliştir' : (current >= 10 ? 'Maksimum' : 'Yetersiz Para')}
+                        </button>
+                    </div>
+                `;
+            }
+
+            content += `
+                </div>
+                <button class="button secondary" onclick="closeModal()">Kapat</button>
+            `;
+
+            showModal(content);
+        }
+
+        // Yetenek geliştirme
+        function upgradeSkill(skill, cost) {
+            if (gameData.money >= cost && gameData.character[skill] < 10) {
+                gameData.money -= cost;
+                gameData.character[skill]++;
+                updateGameUI();
+                upgradeCharacter(); // Sayfayı yenile
+            }
+        }
+
+        // Sayfa yüklendiğinde
+        window.addEventListener('load', function() {
+            // Ayarları yükle
+            const savedSettings = loadFromStorage('game_settings');
+            if (savedSettings) {
+                gameData.settings = savedSettings;
+                
+                if (savedSettings.darkTheme) {
+                    document.body.classList.add('dark-theme');
+                    document.getElementById('theme-toggle').classList.add('active');
+                }
+                
+                document.getElementById('volume-slider').value = savedSettings.volume;
+            }
+
+            // Ses seviyesi değişikliği
+            document.getElementById('volume-slider').addEventListener('input', function() {
+                gameData.settings.volume = this.value;
+                saveToStorage('game_settings', gameData.settings);
+            });
+        });
+
+        // Touch event optimizasyonları
+        document.addEventListener('touchstart', function() {}, {passive: true});
+        document.addEventListener('touchmove', function() {}, {passive: true});
+
+        // Mobil uyumluluk için viewport ayarları
+        function adjustForMobile() {
+            if (window.innerWidth <= 480) {
+                document.body.style.padding = '0';
+            }
+        }
+
+        window.addEventListener('resize', adjustForMobile);
+        adjustForMobile();
+        </script>
