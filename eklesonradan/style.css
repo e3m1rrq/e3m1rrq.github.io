@@ -1,0 +1,136 @@
+html, body {
+  margin:0; padding:0;
+  background: black;
+  font-family: 'Courier New', monospace;
+  overflow: hidden;
+  color: white;
+}
+
+#startScreen, #gameCanvas, #controls, #dialog, #musicBtn, #creditsScreen, #chatBox {
+  position: absolute;
+  z-index: 1;
+}
+
+#startScreen, #creditsScreen {
+  width: 100%; height: 100%;
+  background: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+}
+
+#creditsScreen {
+  display: none;
+  padding: 20px;
+  font-size: 18px;
+  line-height: 1.5;
+  max-width: 90%;
+  margin: auto;
+}
+
+#startBtn, #creditsBtn, #backToMenuBtn {
+  background: #222;
+  color: white;
+  border: 2px solid white;
+  padding: 10px 20px;
+  font-size: 20px;
+  cursor: pointer;
+  border-radius: 10px;
+  user-select: none;
+}
+
+#gameCanvas {
+  display: none;
+  image-rendering: pixelated;
+  background-color: #000;
+}
+
+#controls {
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  gap: 10px;
+}
+
+.btn {
+  background: #222;
+  border: 2px solid white;
+  color: white;
+  font-size: 20px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  user-select: none;
+}
+
+#dialog {
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #222;
+  color: white;
+  border: 2px solid white;
+  padding: 10px 15px;
+  border-radius: 12px;
+  font-size: 16px;
+  max-width: 80%;
+  display: none;
+  z-index: 4;
+}
+
+#musicBtn {
+  top: 10px;
+  right: 10px;
+  background: #222;
+  color: white;
+  border: 2px solid white;
+  padding: 10px;
+  border-radius: 50%;
+  display: none;
+  cursor: pointer;
+  user-select: none;
+  z-index: 3;
+}
+
+#chatBox {
+  display: none;
+  position: absolute;
+  bottom: 150px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #222;
+  color: white;
+  border: 2px solid white;
+  padding: 15px;
+  border-radius: 10px;
+  max-width: 80%;
+  z-index: 5;
+  font-size: 16px;
+}
+
+#chatButtons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+#chatButtons button {
+  background: #444;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  font-weight: bold;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+#chatButtons button:hover {
+  background: #666;
+}

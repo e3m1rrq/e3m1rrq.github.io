@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Doğum günün kutlu olsun zanab.</title>
+<style>
+  html, body {
+    margin:0; padding:0;
+    background: black;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+    color: white;
+  }
+  #startScreen, #gameCanvas, #controls, #dialog, #musicBtn, #creditsScreen, #chatBox {
+    position: absolute;
+    z-index: 1;
+  }
+  #startScreen, #creditsScreen {
+    width: 100%; height: 100%;
+    background: black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+  }
+  #creditsScreen {
+    display: none;
+    padding: 20px;
+    font-size: 18px;
+    line-height: 1.5;
+    max-width: 90%;
+    margin: auto;
+  }
+  #startBtn, #creditsBtn, #backToMenuBtn {
+    background: #222;
+    color: white;
+    border: 2px solid white;
+    padding: 10px 20px;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 10px;
+    user-select: none;
+  }
+  #gameCanvas {
+    display: none;
+    image-rendering: pixelated;
+    background-color: #000;
+  }
+  #controls {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    gap: 10px;
+  }
+  .btn {
+    background: #222;
+    border: 2px solid white;
+    color: white;
+    font-size: 20px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    user-select: none;
+  }
+  #dialog {
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #222;
+    color: white;
+    border: 2px solid white;
+    padding: 10px 15px;
+    border-radius: 12px;
+    font-size: 16px;
+    max-width: 80%;
+    display: none;
+    z-index: 4;
+  }
+  #musicBtn {
+    top: 10px;
+    right: 10px;
+    background: #222;
+    color: white;
+    border: 2px solid white;
+    padding: 10px;
+    border-radius: 50%;
+    display: none;
+    cursor: pointer;
+    user-select: none;
+    z-index: 3;
+  }
+  /* Sohbet kutusu */
+  #chatBox {
+    display: none;
+    position: absolute;
+    bottom: 150px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #222;
+    color: white;
+    border: 2px solid white;
+    padding: 15px;
+    border-radius: 10px;
+    max-width: 80%;
+    z-index: 5;
+    font-size: 16px;
+  }
+  #chatButtons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  #chatButtons button {
+    background: #444;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    user-select: none;
+    transition: background 0.2s;
+  }
+  #chatButtons button:hover {
+    background: #666;
+  }
+</style>
+</head>
+<body>
+
+<div id="startScreen">
+  <h1>Senin Müzen</h1>
+  <p>Burada sevdiğin renkler, anılar ve duygular gizli.<br/>Hazırsan kendini benden tanımaya başla.</p>
+  <button id="startBtn">Başla</button>
+  <button id="creditsBtn">En Son Oku</button>
+</div>
+
+<div id="creditsScreen">
+  <h2>Zeynep..</h2>
+  <p>Bu kişisel müzeyi, sana doğum günü hediyesi olarak hazırladım. <br/>Zamanım kısıtlı olduğundan elimden bunlar geldi.<br/>Uzun zamandır tanışmıyoruz ve seni o kadar yakından tanımıyorum.<br/>Zamanla birbirimizi daha iyi tanıyacağımızı umarak doğum günün kutlamak istiyorum.<br/>Umarım sevinirsin ve umarım dolu dolu bir ömür geçirirsin.<br/>O zaman... iyi ki doğdun! ❤️❤️</p>
+  <button id="backToMenuBtn">Geri Dön</button>
+</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<div id="dialog"></div>
+
+<div id="controls">
+  <button class="btn" onclick="move('left')">←</button>
+  <button class="btn" onclick="move('up')">↑</button>
+  <button class="btn" onclick="move('down')">↓</button>
+  <button class="btn" onclick="move('right')">→</button>
+  <button class="btn" onclick="interact()">❣️</button>
+</div>
+
+<button id="musicBtn" onclick="toggleMusic()">🎶</button>
+
+<!-- Sohbet kutusu -->
+<div id="chatBox">
+  <div id="chatText">Rehber: Merhaba! Yardımcı olabilir miyim?</div>
+  <div id="chatButtons"></div>
+  <button onclick="endChat()" style="margin-top:10px; padding:5px 10px; border-radius:5px; cursor:pointer;">Sohbetten Çık</button>
+</div>
+
+<audio id="bgm" src="sarki.mp3" loop></audio>
+
+<script>
+  const canvas = document.getElementById("gameCanvas");
+  const ctx = canvas.getContext("2d");
+  const dialog = document.getElementById("dialog");
+  const musicBtn = document.getElementById("musicBtn");
+  const startScreen = document.getElementById("startScreen");
+  const controls = document.getElementById("controls");
+  const creditsScreen = document.getElementById("creditsScreen");
+  const chatBox = document.getElementById("chatBox");
+  const chatText = document.getElementById("chatText");
+  const chatButtons = document.getElementById("chatButtons");
+  const music = document.getElementById("bgm");
+
+  function playMusic() {
+    music.volume = 0.5; // Sabit ses seviyesi (%50)
+    music.play();
+  }
+
+  const MAP_WIDTH = 18, MAP_HEIGHT = 10;
+  let TILE = 40;
+  let currentRoom = 0;
+
+  let hasDisk = false;
+  let inChat = false;
+
+const player = {
+  x: 9,
+  y: 4,
+  color: "white",
+  direction: "right" // başlangıç yönü
+};
+
+  // Odalar için duvarlar ve objeler
+  const rooms = [
+    {
+      walls: [...Array(MAP_WIDTH).keys()].flatMap(i => [[i,0],[i,MAP_HEIGHT-1]])
+             .concat([...Array(MAP_HEIGHT).keys()].flatMap(i => [[0,i],[MAP_WIDTH-1,i]])),
+      objects: [
+        { x: 9, y: 2, color: "aqua", icon: "📖", message: "Evde durmayı sevmesen de, sana evde gezebileceğin bir müze hazırladım. Ne duruyorsun?" },
+        { x: 1, y: 5, color: "#00f", icon: "→", message: "Sağ koridorlar için etkileşim: '→' tuşuna bas." },
+        { x: MAP_WIDTH-2, y: 5, color: "#00f", icon: "←", message: "Sol koridorlar için etkileşim: '←' tuşuna bas." },
+        { x: 6, y: 5, color: "#0a0", icon: "👩‍🏫", message: "Rehberle sohbet etmek için etkileşim yap." },
+        { x: 12, y: 5, color: "#aa0", icon: "💿", message: "Müzik kutusu (disk gerekiyor)." }
+      ]
+    },
+    {
+      walls: [...Array(MAP_WIDTH).keys()].flatMap(i => [[i,0],[i,MAP_HEIGHT-1]])
+             .concat([...Array(MAP_HEIGHT).keys()].flatMap(i => [[0,i],[MAP_WIDTH-1,i]])),
+      objects: [
+        { x: 2, y: 1, color: "#00ffcc", icon: "🥬", message: "En sevdiğin yiyecek sarma, 'Ada ben ayrılmak istiyorum.'" },
+        { x: 1, y: 3, color: "#fff", icon: "⚡", message: "En sevdiğin içecek Beyaz Monster, güzel hoş bende çok severim. ⚡" },
+        { x: 1, y: 5, color: "green", icon: "🌈", message: "Yeşil, bordo ve lacivert... Mükemmel bir uyum." },
+        { x: 1, y: 7, color: "brown", icon: "🐎", message: "En sevdiğin hayvan At. Türklükten mi geliyor yoksa özgür ruhluluktan mı?" },
+        { x: MAP_WIDTH-2, y: 5, color: "#00f", icon: "→", message: "Ana koridora dönmek için etkileşim: '→' tuşuna bas." }
+      ]
+    },
+    {
+      walls: [...Array(MAP_WIDTH).keys()].flatMap(i => [[i,0],[i,MAP_HEIGHT-1]])
+             .concat([...Array(MAP_HEIGHT).keys()].flatMap(i => [[0,i],[MAP_WIDTH-1,i]])),
+      objects: [
+        { x: 16, y: 4, color: "#2E4053 ", icon: "🎡", message: "Gondola binmeye bayılırsın🤫" },
+        { x: 16, y: 2, color: "#2D3436 ", icon: "🛹", message: "Subway Surfers en sevdiğin oyun! 🎮" },
+        { x: 16, y: 6, color: "pink", icon: "🎵", message: "Diski kullanmayı denedin mi? 🎵" },
+        { x: 14, y: 8, color: "#5A3E1B", icon: "🐔", message: "Tavuk. Bunu neden söyledin bilmiyorum."},
+        { x: 14, y: 1, color: "#FFDEE9 ", icon: "🫶", message: 'Vesikalık <br><img src="vesikalik.png" style="width:100px; height:100px;" />' },
+         { x: 12, y: 1, color: "#FFDEE9 ", icon: "🗯️", message: 'Cukseviyorum <br><img src="mesaj.png" style="width:100px; height:100px;" />' },
+        { x: 10, y: 8, color: "#FFDEE9 ", icon: "🫶", message: 'Bubeb <br><img src="okey.png" style="width:100px; height:100px;" />' },
+        { x: 12, y: 8, color: "#A0522D", icon: "🐷", message: 'Uglum kuran yakmissin <br><img src="domuz.png" style="width:100px; height:100px;" />' },        
+        { x: 10, y: 1, color: "#555555", icon: "🔪", message: 'Emir(beb) <br><img src="kasap.png" style="width:100px; height:100px;" />' },
+        { x: 8, y: 1, color: "#555555", icon: "😃", message: 'Emir(beb) <br><img src="gulucuk.png" style="width:100px; height:100px;" />' },
+        { x: 1, y: 5, color: "#00f", icon: "←", message: "Ana koridora dönmek için etkileşim: '←' tuşuna bas." }
+      ]
+    }
+  ];
+
+  let walls = [];
+  let objects = [];
+
+  // Çizim fonksiyonları
+function drawPlayer(x, y) {
+  // Gövde
+  ctx.fillStyle = '#800020';
+  ctx.fillRect(x * TILE + TILE/4, y * TILE + TILE/3, TILE/2, TILE/2);
+
+  // Kafa
+  ctx.fillStyle = '#B98E68';
+  ctx.fillRect(x * TILE + TILE/3, y * TILE + TILE/8, TILE/3, TILE/3);
+
+  // Saç rengi
+  ctx.fillStyle = '#3B2F2F';
+
+  if (player.direction === "down") {
+    // Öne bakarken: kısa üst saç + perçem (yüzün üstünde)
+    ctx.fillRect(x * TILE + TILE/3 - 1, y * TILE + TILE/16, TILE/3 + 2, TILE/10); // üst saç
+    ctx.fillRect(x * TILE + TILE/3, y * TILE + TILE/8, TILE/3, TILE/12); // perçem
+  } else if (player.direction === "up") {
+    // Arkadan bakarken: saç arkada, kafa üstünde
+    ctx.fillRect(x * TILE + TILE/3 - 1, y * TILE + TILE/16, TILE/3 + 2, TILE/8);
+    ctx.fillRect(x * TILE + TILE/3 - 1, y * TILE + TILE/6, TILE/3 + 2, TILE/8);
+  } else if (player.direction === "left") {
+    // Sol bakarken: saç kafanın sağ arka tarafında (yüzün arkasında)
+    ctx.fillRect(x * TILE + TILE/2, y * TILE + TILE/16, TILE/4, TILE/8); // enseye uzantı ve yan saç (arka taraf)
+  } else if (player.direction === "right") {
+    // Sağ bakarken: saç kafanın sol arka tarafında (yüzün arkasında)
+    ctx.fillRect(x * TILE + TILE/3 - 1, y * TILE + TILE/16, TILE/4, TILE/8); // enseye uzantı ve yan saç (arka taraf)
+  }
+
+  // Gözler (aynı, yüzün önünde)
+  const eyeW = TILE/10;
+  const eyeH = TILE/10;
+  const irisW = TILE/20;
+  const irisH = TILE/20;
+
+  if (player.direction === "down") {
+    // Önde 2 göz
+    let ex1 = x * TILE + TILE/3;
+    let ex2 = x * TILE + TILE/2;
+    let ey = y * TILE + TILE/5;
+    ctx.fillStyle = 'white';
+    ctx.fillRect(ex1, ey, eyeW, eyeH);
+    ctx.fillRect(ex2, ey, eyeW, eyeH);
+    ctx.fillStyle = '#654321';
+    ctx.fillRect(ex1 + 1, ey + 1, irisW, irisH);
+    ctx.fillRect(ex2 + 1, ey + 1, irisW, irisH);
+  } else if (player.direction === "left") {
+    // Sol bakış 1 göz
+    let ex = x * TILE + TILE/3;
+    let ey = y * TILE + TILE/5;
+    ctx.fillStyle = 'white';
+    ctx.fillRect(ex, ey, eyeW, eyeH);
+    ctx.fillStyle = '#654321';
+    ctx.fillRect(ex + 1, ey + 1, irisW, irisH);
+  } else if (player.direction === "right") {
+    // Sağ bakış 1 göz
+    let ex = x * TILE + TILE/2;
+    let ey = y * TILE + TILE/5;
+    ctx.fillStyle = 'white';
+    ctx.fillRect(ex, ey, eyeW, eyeH);
+    ctx.fillStyle = '#654321';
+    ctx.fillRect(ex + 1, ey + 1, irisW, irisH);
+  }
+}
+
+
+  function drawGuide(x, y) {
+    ctx.fillStyle = '#006400'; // gövde
+    ctx.fillRect(x * TILE + TILE/4, y * TILE + TILE/4, TILE/2, TILE/2);
+    ctx.fillStyle = '#00ff00'; // kafa
+    ctx.fillRect(x * TILE + TILE/3, y * TILE, TILE/3, TILE/3);
+    ctx.fillStyle = 'white'; // gözler
+    ctx.fillRect(x * TILE + TILE/2.5, y * TILE + TILE/10, TILE/10, TILE/10);
+  }
+
+  function resizeCanvas() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    TILE = Math.floor(Math.min(w / MAP_WIDTH, h / MAP_HEIGHT));
+    canvas.width = TILE * MAP_WIDTH;
+    canvas.height = TILE * MAP_HEIGHT;
+    draw();
+  }
+  window.addEventListener("resize", resizeCanvas);
+
+  // Önbelleğe alma: icon resimlerini önceden yükle (yalnızca emoji değilse)
+  const imgCache = {};
+  function preloadImages() {
+    rooms.forEach(room => {
+      room.objects.forEach(o => {
+        if(o.icon && !isEmoji(o.icon)) {
+          const img = new Image();
+          img.src = o.icon;
+          imgCache[o.icon] = img;
+        }
+      });
+    });
+  }
+  function isEmoji(text) {
+    // Basit emoji kontrolü: sadece tek karakter ise emoji kabul edelim
+    return [...text].length === 1;
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Zemin
+    ctx.fillStyle = "#111";
+    for (let x = 0; x < MAP_WIDTH; x++) {
+      for (let y = 0; y < MAP_HEIGHT; y++) {
+        ctx.fillRect(x * TILE, y * TILE, 1, 1);
+      }
+    }
+    // Duvarlar
+    walls.forEach(([x, y]) => {
+      ctx.fillStyle = "#444";
+      ctx.fillRect(x * TILE, y * TILE, TILE, TILE);
+    });
+    // Nesneler (kutular)
+    objects.forEach(o => {
+      ctx.fillStyle = o.color;
+      ctx.fillRect(o.x * TILE, o.y * TILE, TILE, TILE);
+      ctx.textAlign = "center";
+      ctx.font = `${TILE / 1.5}px monospace`;
+      ctx.fillStyle = "#000";
+
+      if(o.icon) {
+        if(isEmoji(o.icon)) {
+          ctx.fillText(o.icon, o.x * TILE + TILE / 2, o.y * TILE + TILE * 0.7);
+        } else {
+          // PNG resim ise önbellekten çiz
+          const img = imgCache[o.icon];
+          if(img && img.complete) {
+            ctx.drawImage(img, o.x * TILE, o.y * TILE, TILE, TILE);
+          } else {
+            // Yüklenmemişse metin göster (?)
+            ctx.fillText("?", o.x * TILE + TILE / 2, o.y * TILE + TILE * 0.7);
+          }
+        }
+      } else {
+        ctx.fillText("?", o.x * TILE + TILE / 2, o.y * TILE + TILE * 0.7);
+      }
+    });
+
+    // Karakter ve rehber çizimi
+    if(currentRoom === 0){
+      drawGuide(6, 5); // rehber pozisyonu
+    }
+    drawPlayer(player.x, player.y);
+  }
+
+  function isBlocked(x, y) {
+    if (walls.some(([wx, wy]) => wx === x && wy === y)) return true;
+
+    for (const o of objects) {
+      if(o.x === x && o.y === y){
+        if(currentRoom === 0 && (o.icon === "👩‍🏫" || o.icon === "💿")) return false;
+        return true;
+      }
+    }
+    return false;
+  }
+
+function move(dir) {
+  if (inChat) return;
+  let nx = player.x, ny = player.y;
+  if (dir === 'left') { nx--; player.direction = "left"; }
+  if (dir === 'right') { nx++; player.direction = "right"; }
+  if (dir === 'up') { ny--; player.direction = "up"; }
+  if (dir === 'down') { ny++; player.direction = "down"; }
+
+  if (!isBlocked(nx, ny)) {
+    player.x = nx;
+    player.y = ny;
+    dialog.style.display = "none";
+  }
+  draw();
+}
+
+  // Sohbet fonksiyonları (startChat, updateChat, addChatButton, endChat)
+  let chatStep = 0;
+
+  function startChat() {
+    inChat = true;
+    chatBox.style.display = "block";
+    dialog.style.display = "none";
+    chatStep = 0;
+    updateChat();
+  }
+
+  function updateChat() {
+    chatButtons.innerHTML = '';
+    switch(chatStep) {
+      case 0:
+        chatText.textContent = "Rehber: Merhaba! Nasıl yardımcı olabilirim?";
+        addChatButton("Geziniyorum", ()=> { chatStep=1; updateChat(); });
+        addChatButton("Sorularım var", ()=> { chatStep=2; updateChat(); });
+        break;
+      case 1:
+        chatText.textContent = "Rehber: Harika! Bu müzede gezip sevdiğin şeyleri keşfedebilirsin.";
+        addChatButton("Teşekkürler", ()=> { chatStep=3; updateChat(); });
+        break;
+      case 2:
+        chatText.textContent = "Rehber: Sorularını dinliyorum, sorun nedir?";
+        addChatButton("Müzik nerede?", ()=> { chatStep=4; updateChat(); });
+        addChatButton("Başka oda var mı?", ()=> { chatStep=5; updateChat(); });
+        addChatButton("İptal", ()=> { endChat(); });
+        break;
+      case 3:
+        chatText.textContent = "Rehber: Sana bir hediye vereceğim, bu müzik diski. Kullanabilirsin!";
+        hasDisk = true;
+        addChatButton("Çok teşekkürler!", ()=> { endChat(); });
+        break;
+      case 4:
+        chatText.textContent = "Rehber: Müzik kutusu ancak müzik diski varsa çalışıyor. Disk yoksa parça bulunamaz.";
+        addChatButton("Anladım", ()=> { chatStep=3; updateChat(); });
+        break;
+      case 5:
+        chatText.textContent = "Rehber: Evet, sol ve sağ koridorlar var. Kutularla etkileşim kurabilirsin.";
+        addChatButton("Teşekkürler", ()=> { chatStep=3; updateChat(); });
+        break;
+      default:
+        chatText.textContent = "Rehber: Görüşürüz!";
+        addChatButton("Sohbetten Çık", ()=> { endChat(); });
+    }
+  }
+
+  function addChatButton(text, cb) {
+    const btn = document.createElement('button');
+    btn.textContent = text;
+    btn.onclick = cb;
+    chatButtons.appendChild(btn);
+  }
+
+  function endChat() {
+    chatBox.style.display = "none";
+    inChat = false;
+    dialog.style.display = "none";
+    draw();
+  }
+
+  function interact() {
+    if(inChat) return;
+    const obj = objects.find(o => Math.abs(o.x - player.x) <= 1 && Math.abs(o.y - player.y) <= 1);
+    if(obj) {
+      dialog.innerHTML = obj.message;
+      dialog.style.display = "block";
+
+      // Kapılar
+      if(obj.icon === "→") {
+        if(currentRoom === 0) loadRoom(2);
+        else if(currentRoom === 1) loadRoom(0);
+      } else if(obj.icon === "←") {
+        if(currentRoom === 0) loadRoom(1);
+        else if(currentRoom === 2) loadRoom(0);
+      }
+      else if(obj.icon === "👩‍🏫") {
+        startChat();
+      }
+      else if(obj.icon === "💿") {
+        if(hasDisk) {
+          if(music.paused) {
+            music.play();
+            musicBtn.style.display = "block";
+            musicBtn.textContent = "🔈";
+            dialog.innerText = "Müzik çalıyor...";
+          } else {
+            music.pause();
+            musicBtn.style.display = "none";
+            dialog.innerText = "Müzik durduruldu.";
+          }
+        } else {
+          dialog.innerText = "Parça bulunamadı! Müzik diski gerekiyor.";
+          musicBtn.style.display = "none";
+          if(!music.paused) music.pause();
+        }
+      }
+    } else {
+      dialog.style.display = "none";
+    }
+  }
+
+  function loadRoom(num) {
+    currentRoom = num;
+    walls = rooms[num].walls;
+    objects = rooms[num].objects;
+    if(num === 0) {
+      player.x = 9; player.y = 4;
+    } else if(num === 1) {
+      player.x = 3; player.y = 5;
+    } else if(num === 2) {
+      player.x = 14; player.y = 5;
+    }
+    dialog.style.display = "none";
+    chatBox.style.display = "none";
+    musicBtn.style.display = (hasDisk && !music.paused) ? "block" : "none";
+    if(musicBtn.style.display === "block") musicBtn.textContent = "🔈"; else musicBtn.textContent = "🎶";
+    draw();
+  }
+
+  function toggleMusic() {
+    if(music.paused) {
+      music.play();
+      musicBtn.textContent = "🔈";
+    } else {
+      music.pause();
+      musicBtn.textContent = "🎶";
+    }
+  }
+
+  // Başlangıç
+  document.getElementById("startBtn").onclick = () => {
+    startScreen.style.display = "none";
+    creditsScreen.style.display = "none";
+    canvas.style.display = "block";
+    controls.style.display = "flex";
+    loadRoom(0);
+    resizeCanvas();
+  };
+
+  document.getElementById("creditsBtn").onclick = () => {
+    startScreen.style.display = "none";
+    creditsScreen.style.display = "flex";
+  };
+
+  document.getElementById("backToMenuBtn").onclick = () => {
+    creditsScreen.style.display = "none";
+    startScreen.style.display = "flex";
+  };
+
+  window.addEventListener("keydown", e => {
+    if(inChat) return;
+    if(e.key === "ArrowLeft") move('left');
+    else if(e.key === "ArrowRight") move('right');
+    else if(e.key === "ArrowUp") move('up');
+    else if(e.key === "ArrowDown") move('down');
+    else if(e.key === " ") interact();
+  });
+
+  draw();
+</script>
+</body>
+</html>
