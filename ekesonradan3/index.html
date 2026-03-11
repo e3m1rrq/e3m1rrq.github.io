@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sabahçı Kahvesi☕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Login Styles */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-card h2 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .error-message {
+            background: #ff4757;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: center;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Main App Styles */
+        .app {
+            display: none;
+        }
+
+        .app.active {
+            display: block;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #74b9ff;
+            color: white;
+        }
+
+        .btn-success {
+            background: #00b894;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #fdcb6e;
+            color: #333;
+        }
+
+        .btn-danger {
+            background: #e17055;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .logout-btn {
+            background: #ff4757;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* Floor Plan Styles */
+        .floor-plan {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .floor-plan h2 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+        }
+
+        .tables-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .table {
+            background: linear-gradient(135deg, #a8e6cf 0%, #88d8c0 100%);
+            border: 3px solid #2d3436;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .table:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .table.occupied {
+            background: linear-gradient(135deg, #ff7675 0%, #fd79a8 100%);
+        }
+
+        .table h3 {
+            color: #2d3436;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .table-status {
+            font-size: 0.9rem;
+            color: #636e72;
+            font-weight: 600;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: block;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalSlide 0.3s ease-out;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e1e5e9;
+        }
+
+        .modal-header h2 {
+            color: #667eea;
+            font-size: 1.5rem;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #667eea;
+        }
+
+        /* Order Management */
+        .order-section {
+            margin-bottom: 25px;
+        }
+
+        .order-section h3 {
+            color: #2d3436;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .order-list {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .order-total {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.1rem;
+            text-align: right;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #e1e5e9;
+        }
+
+        .add-order-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .add-order-form select,
+        .add-order-form input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .add-order-form button {
+            flex: 0 0 auto;
+        }
+
+        .notes-section {
+            margin-top: 20px;
+        }
+
+        .notes-section textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        /* Menu Styles */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .menu-category {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .menu-category h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item-name {
+            font-weight: 600;
+            color: #2d3436;
+        }
+
+        .menu-item-price {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        /* Employee Management */
+        .employee-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .employee-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .employee-name {
+            font-weight: 600;
+            color: #2d3436;
+        }
+
+        .employee-wage {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .employee-wage input {
+            width: 100px;
+            padding: 5px 10px;
+            border: 1px solid #e1e5e9;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .employee-wage button {
+            padding: 5px 12px;
+            font-size: 12px;
+        }
+
+        /* Revenue Styles */
+        .revenue-summary {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .revenue-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .revenue-item:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .revenue-item-label {
+            font-weight: 600;
+        }
+
+        .revenue-item-value {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .header-buttons > * {
+                width: 100%;
+                text-align: center;
+            }
+
+            .tables-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 15px;
+            }
+
+            .table {
+                min-height: 100px;
+                padding: 15px;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+                padding: 20px;
+            }
+
+            .add-order-form {
+                flex-direction: column;
+            }
+
+            .add-order-form select,
+            .add-order-form input,
+            .add-order-form button {
+                width: 100%;
+            }
+
+            .btn {
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 30px 20px;
+            }
+
+            .tables-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header-buttons {
+                gap: 8px;
+            }
+
+            .btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-card">
+            <h2>Sabahçı Kahvesi☕</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Kullanıcı Adı</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Şifre</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="login-btn">Giriş Yap</button>
+            </form>
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app" class="app">
+        <div class="container">
+            <div class="header">
+                <div class="header-buttons">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="openMenu()">📋 Menu</button>
+                        <button class="btn btn-warning" onclick="openDailyWage()">💰Yevmiye</button>
+                        <button class="btn btn-success" onclick="openDailyRevenue()">📊Günlük Ciro</button>
+                        <button class="btn btn-secondary" onclick="openMonthlyRevenue()">📈Aylık Ciro</button>
+                    </div>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+            <div class="floor-plan">
+                <h2>🏪Masalar</h2>
+                <div class="tables-grid" id="tablesGrid">
+                    <!-- Tables will be generated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Modal -->
+    <div id="tableModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="tableModalTitle">Masa 1</h2>
+                <span class="close" onclick="closeModal('tableModal')">&times;</span>
+            </div>
+            
+            <div class="order-section">
+                <h3>📝Siparişler</h3>
+                <div class="order-list" id="orderList">
+                    <!-- Orders will be displayed here -->
+                </div>
+                <div class="order-total" id="orderTotal">Total: 0₺</div>
+                
+                <h3>➕Yeni Sipariş Ekle</h3>
+                <div class="add-order-form">
+                    <select id="productSelect">
+                        <option value="">Ürün Seç</option>
+                    </select>
+                    <input type="number" id="quantityInput" placeholder="Quantity" min="1" value="1">
+                    <button class="btn btn-success" onclick="addOrder()">Sipariş Ekle</button>
+                </div>
+            </div>
+
+            <div class="notes-section">
+                <h3>📝 Table Notes</h3>
+                <textarea id="tableNotes" placeholder="Add special notes for this table..."></textarea>
+                <button class="btn btn-primary" onclick="saveNotes()" style="margin-top: 10px;">Save Notes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Modal -->
+    <div id="menuModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 Menu & Prices</h2>
+                <span class="close" onclick="closeModal('menuModal')">&times;</span>
+            </div>
+            <div class="menu-grid" id="menuGrid">
+                <!-- Menu items will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Wage Modal -->
+    <div id="dailyWageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>💰 Daily Wage Management</h2>
+                <span class="close" onclick="closeModal('dailyWageModal')">&times;</span>
+            </div>
+            <div class="employee-list" id="employeeList">
+                <!-- Employee wage management will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Revenue Modal -->
+    <div id="dailyRevenueModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📊 Daily Revenue</h2>
+                <span class="close" onclick="closeModal('dailyRevenueModal')">&times;</span>
+            </div>
+            <div id="dailyRevenueContent">
+                <!-- Daily revenue content will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Revenue Modal -->
+    <div id="monthlyRevenueModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📈 Monthly Revenue Analysis</h2>
+                <span class="close" onclick="closeModal('monthlyRevenueModal')">&times;</span>
+            </div>
+            <div id="monthlyRevenueContent">
+                <!-- Monthly revenue content will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Data Storage
+        let appData = {
+            loginTime: null,
+            tables: {},
+            employees: [
+                { id: 1, name: 'Ali Yılmaz', dailyWage: 0 },
+                { id: 2, name: 'Ayşe Demir', dailyWage: 0 },
+                { id: 3, name: 'Mehmet Kaya', dailyWage: 0 },
+                { id: 4, name: 'Fatma Özkan', dailyWage: 0 },
+                { id: 5, name: 'Ahmet Şahin', dailyWage: 0 },
+                { id: 6, name: 'Zeynep Çelik', dailyWage: 0 }
+            ],
+            wageHistory: [],
+            orderHistory: []
+        };
+
+        // Menu Data
+        const menuData = {
+            'Hot Drinks': {
+                'Espresso': 25,
+                'Cappuccino': 35,
+                'Latte': 40,
+                'Turkish Coffee': 30,
+                'Hot Chocolate': 35
+            },
+            'Cold Drinks': {
+                'Iced Coffee': 30,
+                'Cola': 40,
+                'Lemonade': 35,
+                'Orange Juice': 45,
+                'Iced Tea': 25
+            },
+            'Snacks': {
+                'Croissant': 20,
+                'Sandwich': 55,
+                'Cake Slice': 45,
+                'Muffin': 25,
+                'Bagel': 30
+            }
+        };
+
+        // Login credentials
+        const credentials = {
+            username: 'admin',
+            password: 'cafe123'
+        };
+
+        let currentTableId = null;
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
+            generateTables();
+            populateProductSelect();
+            populateMenu();
+        });
+
+        // Login Management
+        function checkLoginStatus() {
+            if (appData.loginTime) {
+                const now = new Date().getTime();
+                const loginTime = new Date(appData.loginTime).getTime();
+                const hoursDiff = (now - loginTime) / (1000 * 60 * 60);
+                
+                if (hoursDiff < 12) {
+                    showApp();
+                    return;
+                }
+            }
+            showLogin();
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === credentials.username && password === credentials.password) {
+                appData.loginTime = new Date().toISOString();
+                showApp();
+            } else {
+                showError('Invalid username or password');
+            }
+        });
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        function showLogin() {
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('app').classList.remove('active');
+        }
+
+        function showApp() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('app').classList.add('active');
+        }
+
+        function logout() {
+            appData.loginTime = null;
+            showLogin();
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        // Table Management
+        function generateTables() {
+            const tablesGrid = document.getElementById('tablesGrid');
+            tablesGrid.innerHTML = '';
+            
+            for (let i = 1; i <= 12; i++) {
+                if (!appData.tables[i]) {
+                    appData.tables[i] = {
+                        id: i,
+                        orders: [],
+                        notes: '',
+                        total: 0
+                    };
+                }
+                
+                const table = document.createElement('div');
+                table.className = 'table';
+                table.onclick = () => openTable(i);
+                
+                const hasOrders = appData.tables[i].orders.length > 0;
+                if (hasOrders) {
+                    table.classList.add('occupied');
+                }
+                
+                table.innerHTML = `
+                    <h3>Table ${i}</h3>
+                    <div class="table-status">
+                        ${hasOrders ? 'Occupied' : 'Available'}
+                    </div>
+                    ${hasOrders ? `<div style="margin-top: 5px; font-size: 0.8rem; color: #2d3436;">Total: ${appData.tables[i].total}₺</div>` : ''}
+                `;
+                
+                tablesGrid.appendChild(table);
+            }
+        }
+
+        function openTable(tableId) {
+            currentTableId = tableId;
+            document.getElementById('tableModalTitle').textContent = `Table ${tableId}`;
+            document.getElementById('tableNotes').value = appData.tables[tableId].notes || '';
+            updateOrderList();
+            document.getElementById('tableModal').classList.add('active');
+        }
+
+        function updateOrderList() {
+            const orderList = document.getElementById('orderList');
+            const orderTotal = document.getElementById('orderTotal');
+            const table = appData.tables[currentTableId];
+            
+            if (table.orders.length === 0) {
+                orderList.innerHTML = '<div style="text-align: center; color: #636e72; padding: 20px;">Şuanlık Sipariş Yok</div>';
+                orderTotal.textContent = 'Total: 0₺';
+                return;
+            }
+            
+            let html = '';
+            let total = 0;
+            
+            table.orders.forEach((order, index) => {
+                const orderTotal = order.price * order.quantity;
+                total += orderTotal;
+                html += `
+                    <div class="order-item">
+                        <span>${order.quantity} ${order.product}</span>
+                        <span>${orderTotal}₺ <button onclick="removeOrder(${index})" style="margin-left: 10px; padding: 2px 6px; background: #ff4757; color: white; border: none; border-radius: 3px; cursor: pointer;">×</button></span>
+                    </div>
+                `;
+            });
+            
+            orderList.innerHTML = html;
+            orderTotal.textContent = `Total: ${total}₺`;
+            appData.tables[currentTableId].total = total;
+        }
+
+        function addOrder() {
+            const product = document.getElementById('productSelect').value;
+            const quantity = parseInt(document.getElementById('quantityInput').value) || 1;
+            
+            if (!product) {
+                alert('Please select a product');
+                return;
+            }
+            
+            const price = getProductPrice(product);
+            if (price === null) {
+                alert('Product not found');
+                return;
+            }
+            
+            const order = {
+                product: product,
+                quantity: quantity,
+                price: price,
+                timestamp: new Date().toISOString()
+            };
+            
+            appData.tables[currentTableId].orders.push(order);
+            appData.orderHistory.push({
+                ...order,
+                tableId: currentTableId,
+                date: new Date().toDateString()
+            });
+            
+            updateOrderList();
+            generateTables();
+            
+            // Reset form
+            document.getElementById('productSelect').value = '';
+            document.getElementById('quantityInput').value = '1';
+        }
+
+        function removeOrder(index) {
+            appData.tables[currentTableId].orders.splice(index, 1);
+            updateOrderList();
+            generateTables();
+        }
+
+        function saveNotes() {
+            const notes = document.getElementById('tableNotes').value;
+            appData.tables[currentTableId].notes = notes;
+            alert('Notes saved successfully!');
+        }
+
+        function getProductPrice(product) {
+            for (const category in menuData) {
+                if (menuData[category][product]) {
+                    return menuData[category][product];
+                }
+            }
+            return null;
+        }
+
+        function populateProductSelect() {
+            const select = document.getElementById('productSelect');
+            select.innerHTML = '<option value="">Select Product</option>';
+            
+            for (const category in menuData) {
+                for (const product in menuData[category]) {
+                    const option = document.createElement('option');
+                    option.value = product;
+                    option.textContent = `${product} - ${menuData[category][product]}₺`;
+                    select.appendChild(option);
+                }
+            }
+        }
+
+        // Menu Management
+        function populateMenu() {
+            const menuGrid = document.getElementById('menuGrid');
+            menuGrid.innerHTML = '';
+            
+            for (const category in menuData) {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'menu-category';
+                
+                let html = `<h3>${category}</h3>`;
+                for (const product in menuData[category]) {
+                    html += `
+                        <div class="menu-item">
+                            <span class="menu-item-name">${product}</span>
+                            <span class="menu-item-price">${menuData[category][product]}₺</span>
+                        </div>
+                    `;
+                }
+                
+                categoryDiv.innerHTML = html;
+                menuGrid.appendChild(categoryDiv);
+            }
+        }
+
+        // Modal Management
+        function openMenu() {
+            document.getElementById('menuModal').classList.add('active');
+        }
+
+        function openDailyWage() {
+            updateEmployeeList();
+            document.getElementById('dailyWageModal').classList.add('active');
+        }
+
+        function openDailyRevenue() {
+            updateDailyRevenue();
+            document.getElementById('dailyRevenueModal').classList.add('active');
+        }
+
+        function openMonthlyRevenue() {
+            updateMonthlyRevenue();
+            document.getElementById('monthlyRevenueModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        }
+
+        // Employee Management
+        function updateEmployeeList() {
+            const employeeList = document.getElementById('employeeList');
+            employeeList.innerHTML = '';
+            
+            appData.employees.forEach(employee => {
+                const employeeDiv = document.createElement('div');
+                employeeDiv.className = 'employee-item';
+                
+                employeeDiv.innerHTML = `
+                    <div class="employee-name">${employee.name}</div>
+                    <div class="employee-wage">
+                        <input type="number" id="wage-${employee.id}" value="${employee.dailyWage}" min="0" step="10">
+                        <span>₺</span>
+                        <button class="btn btn-success" onclick="updateWage(${employee.id})">Update</button>
+                    </div>
+                `;
+                
+                employeeList.appendChild(employeeDiv);
+            });
+        }
+
+        function updateWage(employeeId) {
+            const wageInput = document.getElementById(`wage-${employeeId}`);
+            const newWage = parseInt(wageInput.value) || 0;
+            
+            const employee = appData.employees.find(emp => emp.id === employeeId);
+            if (employee) {
+                const oldWage = employee.dailyWage;
+                employee.dailyWage = newWage;
+                
+                // Record wage change in history
+                appData.wageHistory.push({
+                    employeeId: employeeId,
+                    employeeName: employee.name,
+                    oldWage: oldWage,
+                    newWage: newWage,
+                    timestamp: new Date().toISOString(),
+                    date: new Date().toDateString()
+                });
+                
+                alert(`Wage updated for ${employee.name}: ${newWage}₺`);
+            }
+        }
+
+        // Daily Revenue Management
+        function updateDailyRevenue() {
+            const content = document.getElementById('dailyRevenueContent');
+            const today = new Date().toDateString();
+            
+            // Get today's orders
+            const todayOrders = appData.orderHistory.filter(order => order.date === today);
+            
+            // Calculate total revenue
+            let totalRevenue = 0;
+            const ordersByTable = {};
+            
+            todayOrders.forEach(order => {
+                const orderTotal = order.price * order.quantity;
+                totalRevenue += orderTotal;
+                
+                if (!ordersByTable[order.tableId]) {
+                    ordersByTable[order.tableId] = [];
+                }
+                ordersByTable[order.tableId].push({
+                    ...order,
+                    total: orderTotal
+                });
+            });
+            
+            // Calculate total wages paid today
+            const todayWages = appData.wageHistory.filter(wage => wage.date === today);
+            const totalWages = appData.employees.reduce((sum, emp) => sum + emp.dailyWage, 0);
+            
+            // Calculate net profit
+            const netProfit = totalRevenue - totalWages;
+            
+            let html = `
+                <div class="revenue-summary">
+                    <div class="revenue-item">
+                        <span class="revenue-item-label">Date:</span>
+                        <span class="revenue-item-value">${today}</span>
+                    </div>
+                    <div class="revenue-item">
+                        <span class="revenue-item-label">Total Orders:</span>
+                        <span class="revenue-item-value">${todayOrders.length}</span>
+                    </div>
+                    <div class="revenue-item">
+                        <span class="revenue-item-label">Total Revenue:</span>
+                        <span class="revenue-item-value">${totalRevenue}₺</span>
+                    </div>
+                    <div class="revenue-item">
+                        <span class="revenue-item-label">Total Wages Paid:</span>
+                        <span class="revenue-item-value">${totalWages}₺</span>
+                    </div>
+                    <div class="revenue-item">
+                        <span class="revenue-item-label">Net Profit:</span>
+                        <span class="revenue-item-value">${netProfit}₺</span>
+                    </div>
+                </div>
+            `;
+            
+            if (todayOrders.length > 0) {
+                html += '<h3>📋 Today\'s Orders by Table:</h3>';
+                
+                for (const tableId in ordersByTable) {
+                    const orders = ordersByTable[tableId];
+                    const tableTotal = orders.reduce((sum, order) => sum + order.total, 0);
+                    
+                    html += `
+                        <div class="revenue-summary" style="margin-bottom: 15px;">
+                            <h4 style="color: #667eea; margin-bottom: 10px;">Table ${tableId} - Total: ${tableTotal}₺</h4>
+                    `;
+                    
+                    orders.forEach(order => {
+                        html += `
+                            <div class="revenue-item">
+                                <span>${order.quantity} ${order.product}</span>
+                                <span>${order.total}₺</span>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                }
+            } else {
+                html += '<div style="text-align: center; color: #636e72; padding: 20px;">Bugün Sipariş Yok</div>';
+            }
+            
+            content.innerHTML = html;
+        }
+
+        // Monthly Revenue Management
+        function updateMonthlyRevenue() {
+            const content = document.getElementById('monthlyRevenueContent');
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            
+            // Filter orders for current month
+            const monthlyOrders = appData.orderHistory.filter(order => {
+                const orderDate = new Date(order.timestamp);
+                return orderDate.getMonth() === currentMonth && orderDate.getFullYear() === currentYear;
+            });
+            
+            // Calculate daily breakdown
+            const dailyBreakdown = {};
+            let totalMonthlyRevenue = 0;
+            
+            monthlyOrders.forEach(order => {
+                const orderDate = new Date(order.timestamp).toDateString();
+                const orderTotal = order.price * order.quantity;
+                
+                if (!dailyBreakdown[orderDate]) {
+                    dailyBreakdown[orderDate] = {
+                        orders: [],
+                        total: 0
+                    };
+                }
+                
+                dailyBreakdown[orderDate].orders.push(order);
+                dailyBreakdown[orderDate].total += orderTotal;
+                totalMonthlyRevenue += orderTotal;
+            });
+            
+            // Calculate monthly wages
+            const monthlyWages = appData.wageHistory.filter(wage => {
+                const wageDate = new Date(wage.timestamp);
+                return wageDate.getMonth() === currentMonth && wageDate.getFullYear() === currentYear;
+            });
+            
+            const totalMonthlyWages = monthlyWages.reduce((sum, wage) => sum + wage.newWage, 0);
+            
+            // Product analysis
+            const productStats = {};
+            monthlyOrders.forEach(order => {
+                if (!productStats[order.product]) {
+                    productStats[order.product] = {
+                        quantity: 0,
+                        revenue: 0
+                    };
+                }
+                productStats[order.product].quantity += order.quantity;
+                productStats[order.product].revenue += order.price * order.quantity;
+            });
+            
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            let html = `
+                <div class="revenue-summary">
+                    <div class="revenue-item">
+                        <span class="revenue-item-label">Month:</span>
+                        <span class="revenue-item-value">${monthNames[currentMonth]} ${currentYear}</span>
+                    </div>
+                    <div class="revenue-item">
+                        <span class="revenue-item-label">Total Orders:</span>
+                        <span class="revenue-item-value">${monthlyOrders.length}</span>
+                    </div>
+                    <div class="revenue-item">
+                        <span class="revenue-item-label">Total Revenue:</span>
+                        <span class="revenue-item-value">${totalMonthlyRevenue}₺</span>
+                    </div>
+                    <div class="revenue-item">
+                        <span class="revenue-item-label">Total Wages:</span>
+                        <span class="revenue-item-value">${totalMonthlyWages}₺</span>
+                    </div>
+                    <div class="revenue-item">
+                        <span class="revenue-item-label">Net Profit:</span>
+                        <span class="revenue-item-value">${totalMonthlyRevenue - totalMonthlyWages}₺</span>
+                    </div>
+                </div>
+            `;
+            
+            // Daily breakdown
+            if (Object.keys(dailyBreakdown).length > 0) {
+                html += '<h3>📊 Daily Breakdown:</h3>';
+                
+                Object.keys(dailyBreakdown).sort().forEach(date => {
+                    const dayData = dailyBreakdown[date];
+                    html += `
+                        <div class="revenue-summary" style="margin-bottom: 15px;">
+                            <h4 style="color: #667eea; margin-bottom: 10px;">${date} - ${dayData.total}₺</h4>
+                            <div style="font-size: 0.9rem; color: #636e72;">${dayData.orders.length} orders</div>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Product analysis
+            if (Object.keys(productStats).length > 0) {
+                html += '<h3>🥇 Top Products:</h3>';
+                
+                const sortedProducts = Object.entries(productStats)
+                    .sort(([,a], [,b]) => b.revenue - a.revenue)
+                    .slice(0, 10);
+                
+                html += '<div class="revenue-summary">';
+                sortedProducts.forEach(([product, stats]) => {
+                    html += `
+                        <div class="revenue-item">
+                            <span>${product} (${stats.quantity} sold)</span>
+                            <span>${stats.revenue}₺</span>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            if (monthlyOrders.length === 0) {
+                html += '<div style="text-align: center; color: #636e72; padding: 20px;">Bu Ay Sipariş Yok.</div>';
+            }
+            
+            content.innerHTML = html;
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const activeModal = document.querySelector('.modal.active');
+                if (activeModal) {
+                    activeModal.classList.remove('active');
+                }
+            }
+        });
+
+        // Auto-save functionality (simulated)
+        setInterval(function() {
+            // In a real application, this would save to a server
+            console.log('Auto-saving data...', appData);
+        }, 30000); // Save every 30 seconds
+    </script>
+</body>
+</html>
