@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>kalp.exe</title>
+<style>
+
+:root{--bg:#050008;--ink:#ffb3e8;color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#050008;--ink:#ffb3e8}}
+:root[data-theme="dark"]{--bg:#050008;--ink:#ffb3e8}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);overscroll-behavior:none;touch-action:none;font-family:"Cascadia Mono",Consolas,"Courier New",monospace}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;filter:drop-shadow(0 0 4px rgba(255,47,179,.55))}
+.scan{position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(transparent 0 2px,rgba(0,0,0,.2) 3px),radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.7))}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+#mo{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));padding:6px 12px;border:1px solid #ff2fb3;border-radius:0;background:#050008;color:var(--ink);font:13px inherit;font-family:inherit;cursor:pointer;touch-action:manipulation}
+#mo:focus-visible{outline:2px solid #19f0e0;outline-offset:2px}
+#boot{position:fixed;inset:0;z-index:10;box-sizing:border-box;display:flex;align-items:center;padding:max(24px,env(safe-area-inset-top)) 22px;background:var(--bg);color:var(--ink);font-size:clamp(12px,3.3vw,19px);line-height:1.8;transition:opacity .7s;cursor:pointer}
+#boot.out{opacity:0;pointer-events:none}
+#boot div{white-space:pre-wrap;word-break:break-word}
+#boot .p{color:#19f0e0;margin-right:.8em}
+#boot .h{color:#fff0fb;text-shadow:0 0 10px #ff2fb3}
+#boot .cur{display:inline-block;width:.6em;height:1.1em;background:#ffd0f0;vertical-align:-.2em;animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){#boot .cur{animation:none}}
+</style>
+</head>
+<body>
+<h1 class="sr" id="sr"></h1>
+<canvas id="c" aria-label="Terminalde dönen 3D ASCII kalp"></canvas>
+<div class="scan"></div>
+<div id="boot" role="status" aria-live="polite"><div id="bp"></div></div>
+<button id="mo" type="button" aria-pressed="false">[ hareketi azalt ]</button>
+<script>
+
+const CONFIG = {
+  name: "Tuğçem"
+};
+
+
+(()=>{
+const NAME = CONFIG.name.toLocaleUpperCase('tr');
+document.getElementById('sr').textContent = NAME;
+
+const cv = document.getElementById('c');
+const g = cv.getContext('2d');
+
+const checkMobile = () => matchMedia('(pointer:coarse)').matches || innerWidth < 700 || innerHeight > innerWidth * 1.15;
+let mobile = checkMobile();
+let CS = mobile ? 2 : 1;
+
+let reduceMotion = matchMedia('(prefers-reduced-motion:reduce)').matches;
+let mot = reduceMotion ? .3 : 1;
+
+const FONT = '"Cascadia Mono",Consolas,"Courier New",monospace';
+const RAMP = ' .,:;-=+*#%@';
+
+const clampVal = (v, a, b) => Math.max(a, Math.min(b, v));
+
+const COL = [];
+for(let i = 0; i < 12; i++){
+    let t = i / 11;
+    let u = clampVal((t - .8) * 5, 0, 1);
+    let k = Math.min(t / .8, 1);
+    COL.push('rgb(' + Math.round(70 + 185 * k) + ',' + Math.round(10 + 37 * k + 163 * u) + ',' + Math.round(80 + 99 * k + 66 * u) + ')');
+}
+COL.push('#19f0e0'); // extra accent color at the end
+
+const BY0 = .22;
+let BW = 1.8;
+let BH = .7;
+let MW = 8;
+let MH = 5;
+let mask = new Uint8Array(40);
+
+const mk = document.createElement('canvas');
+const mg = mk.getContext('2d', { willReadFrequently: true });
+
+function buildMask(){
+    BW = mobile ? 1.5 : 1.8;
+    BH = mobile ? .6 : .7;
+    MW = Math.max(8, Math.round(BW * ppu / cw));
+    MH = Math.max(5, Math.round(BH * ppu / ch));
+    
+    mk.width = MW;
+    mk.height = MH;
+    mask = new Uint8Array(MW * MH);
+    
+    const k = 1.3 * cw / ch;
+    const HX = .7;
+    mg.setTransform(HX, 0, 0, k, 0, 0);
+    
+    let f = (MH - 1) / (.72 * k);
+    const fn = () => (mobile ? 'bold ' : 'normal ') + f + 'px Consolas,"Courier New",monospace';
+    mg.font = fn();
+    
+    const gap = () => Math.max(2, f * .3);
+    const tw = () => {
+        let w = 0;
+        for(const c of NAME) {
+            w += mg.measureText(c).width * HX;
+        }
+        return w + gap() * (NAME.length - 1);
+    };
+    
+    while(f > 4 && tw() > MW - 2){
+        f -= .5;
+        mg.font = fn();
+    }
+    
+    mg.textAlign = 'left';
+    mg.textBaseline = 'middle';
+    mg.fillStyle = '#fff';
+    
+    let x = (MW - tw()) / 2;
+    for(const c of NAME){
+        mg.fillText(c, x / HX, MH / 2 / k);
+        x += mg.measureText(c).width * HX + gap();
+    }
+    
+    const d = mg.getImageData(0, 0, MW, MH).data;
+    for(let i = 0; i < MW * MH; i++){
+        mask[i] = d[i * 4 + 3] > 60 ? 1 : 0;
+    }
+}
+
+let BIN = '';
+for(const q of NAME) {
+    BIN += q.charCodeAt(0).toString(2).padStart(8, '0');
+}
+const PLAIN = NAME + ' ';
+
+let W, H, fs, cw, ch, cols, rows, ppu, idx, drops, spd;
+
+function resize(){
+    mobile = checkMobile();
+    CS = mobile ? 2 : 1;
+    cv.style.filter = mobile ? 'none' : '';
+    
+    const d = Math.min(devicePixelRatio || 1, 3);
+    W = innerWidth;
+    H = innerHeight;
+    cv.width = W * d;
+    cv.height = H * d;
+    g.setTransform(d, 0, 0, d, 0, 0);
+    
+    ppu = Math.min(H * .8 / 2.5, W * (mobile ? 1.05 : .7) / 2.4);
+    fs = mobile ? clampVal(ppu * 2.5 / 72 / 1.15, 4, 7) : W > 1600 ? 16 : 14;
+    g.font = fs + 'px ' + FONT;
+    cw = g.measureText('M').width;
+    ch = mobile ? fs * 1.15 : Math.round(fs * 1.15);
+    
+    cols = Math.floor(W / cw);
+    rows = Math.floor(H / ch);
+    ppu = Math.min(H * .8 / 2.5, W * (mobile ? 1.05 : .7) / 2.4);
+    
+    idx = new Uint8Array(cols * rows);
+    buildMask();
+    
+    drops = new Float32Array(cols);
+    spd = new Float32Array(cols);
+    for(let i = 0; i < cols; i++){
+        drops[i] = Math.random() * rows;
+        spd[i] = 3 + Math.random() * 9;
+    }
+}
+
+let resizeTimer;
+addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(resize, 80);
+});
+resize();
+
+const heartEquation = (x, y, z) => {
+    const a = x * x + 2.25 * z * z + y * y - 1;
+    return a * a * a - x * x * y * y * y - .1125 * z * z * y * y * y;
+};
+
+let mx = 0, my = 0, wheel = 0, lastW = 0, dX = 0, dY = 0, drag = false, lp = null, kx = 0, ky = 0;
+
+addEventListener('pointermove', e => {
+    if(e.pointerType !== 'touch'){
+        mx = e.clientX / innerWidth * 2 - 1;
+        my = e.clientY / innerHeight * 2 - 1;
+    } else if(drag && lp){
+        dX = clampVal(dX + (e.clientX - lp[0]) / innerWidth * 2.4, -1, 1);
+        dY = clampVal(dY + (e.clientY - lp[1]) / innerHeight * 2.4, -1, 1);
+        lp = [e.clientX, e.clientY];
+    }
+});
+
+addEventListener('pointerdown', e => {
+    if(e.pointerType === 'touch'){
+        drag = true;
+        lp = [e.clientX, e.clientY];
+    }
+});
+
+['pointerup', 'pointercancel'].forEach(n => addEventListener(n, () => {
+    drag = false;
+    lp = null;
+}));
+
+document.addEventListener('mouseleave', () => {
+    mx = my = 0;
+});
+
+addEventListener('wheel', e => {
+    e.preventDefault();
+    wheel = clampVal(wheel + e.deltaY * .0012, -.6, .6);
+    lastW = performance.now();
+}, { passive: false });
+
+addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+addEventListener('scroll', () => scrollTo(0, 0));
+
+addEventListener('keydown', e => {
+    const m = {
+        ArrowLeft: [-.3, 0],
+        ArrowRight: [.3, 0],
+        ArrowUp: [0, -.3],
+        ArrowDown: [0, .3]
+    }[e.key];
+    if(m){
+        kx = clampVal(kx + m[0], -1, 1);
+        ky = clampVal(ky + m[1], -1, 1);
+        e.preventDefault();
+    }
+});
+
+const motionToggleBtn = document.getElementById('mo');
+const updateButtonLabel = () => {
+    motionToggleBtn.setAttribute('aria-pressed', reduceMotion);
+    motionToggleBtn.textContent = reduceMotion ? '[ hareketi aç ]' : '[ hareketi azalt ]';
+};
+motionToggleBtn.onclick = () => {
+    reduceMotion = !reduceMotion;
+    mot = reduceMotion ? .3 : 1;
+    updateButtonLabel();
+};
+updateButtonLabel();
+
+const CMDS = [
+    "naber " + NAME,
+    "sudo sev --hep",
+    'git commit -m "seni seviyorum"',
+    "rm -rf askimmm",
+    "love.exe /force /name:" + NAME,
+    "cd /kalp && ./baslat.sh",
+    "chmod +x mutlulugumsun.sh",
+    "echo " + NAME + " > kalp.txt"
+];
+
+const activeCmds = [];
+let nextCmdTime = 2;
+let lastFrameTime = performance.now();
+let T = 0, cy = 0, cx = 0, vy = 0, vx = 0, rafId, fps = 60;
+const Lo = [0, 0, 0], Vo = [0, 0, 0];
+
+function toObj(x, y, z, o, ca, sa, cp, sp){
+    const x1 = x * ca - z * sa;
+    const z1 = x * sa + z * ca;
+    o[0] = x1;
+    o[1] = y * cp + z1 * sp;
+    o[2] = -y * sp + z1 * cp;
+}
+
+function loop(now){
+    rafId = requestAnimationFrame(loop);
+    
+    const dt = Math.min((now - lastFrameTime) / 1000, .05);
+    lastFrameTime = now;
+    T += dt * (.4 + .6 * mot);
+    fps += (1 / Math.max(dt, .001) - fps) * .05;
+    
+    // Heartbeat pulse math
+    const ph = (T / .85) % 1;
+    const d1 = Math.min(ph, 1 - ph);
+    const pl = Math.exp(-Math.pow(d1 / .07, 2)) + .55 * Math.exp(-Math.pow((ph - .24) / .06, 2));
+    
+    const amp = reduceMotion ? .4 : 1;
+    const sc = 1 + .06 * pl * amp;
+    const s = 1 / sc;
+    
+    if(now - lastW > 1200) wheel *= Math.exp(-.8 * dt);
+    if(!drag){
+        dX *= Math.exp(-1.1 * dt);
+        dY *= Math.exp(-1.1 * dt);
+    }
+    kx *= Math.exp(-1.5 * dt);
+    ky *= Math.exp(-1.5 * dt);
+    
+    const tY = clampVal((mx + dX + kx) * .8 + (mobile && !drag ? Math.sin(T * .5) * .4 * mot : 0), -.95, .95);
+    const tX = clampVal(my * .45 + wheel + dY * .5 + ky * .4, -.7, .7);
+    
+    vy += ((tY - cy) * 40 - vy * 9) * dt;
+    cy += vy * dt;
+    vx += ((tX - cx) * 40 - vx * 9) * dt;
+    cx += vx * dt;
+    
+    const yaw = cy + Math.sin(T * .6) * .05 * mot;
+    const pitch = cx + Math.sin(T * .45 + 1) * .03 * mot;
+    
+    const ca = Math.cos(yaw), sa = Math.sin(yaw);
+    const cp = Math.cos(pitch), sp = Math.sin(pitch);
+    
+    toObj(-.5, .6, .62, Lo, ca, sa, cp, sp);
+    toObj(0, 0, 1, Vo, ca, sa, cp, sp);
+    
+    const ll = Math.hypot(Lo[0], Lo[1], Lo[2]);
+    Lo[0] /= ll; Lo[1] /= ll; Lo[2] /= ll;
+    
+    const boost = .9 + .25 * pl * amp;
+    
+    for(let j = 0; j < rows; j++){
+        const vy0 = (-((j * ch + ch / 2) - H / 2) / ppu + .1) * s;
+        for(let i = 0; i < cols; i++){
+            const vx0 = (((i * cw + cw / 2) - W / 2) / ppu) * s;
+            const r2 = vx0 * vx0 + vy0 * vy0;
+            const k = j * cols + i;
+            
+            if(r2 > 2.56){
+                idx[k] = 0;
+                continue;
+            }
+            
+            const zs = Math.sqrt(2.56 - r2);
+            let hit = false, x = 0, y = 0, z = 0;
+            
+            for(let zz = zs; zz > -zs; zz -= .05){
+                const x1 = vx0 * ca - zz * sa;
+                const z1 = vx0 * sa + zz * ca;
+                const y2 = vy0 * cp + z1 * sp;
+                const z2 = -vy0 * sp + z1 * cp;
+                
+                if(heartEquation(x1, y2, z2) < 0){
+                    hit = true;
+                    x = x1; y = y2; z = z2;
+                    break;
+                }
+            }
+            
+            if(!hit){
+                idx[k] = 0;
+                continue;
+            }
+            
+            const e = .02;
+            let nx = heartEquation(x + e, y, z) - heartEquation(x - e, y, z);
+            let ny = heartEquation(x, y + e, z) - heartEquation(x, y - e, z);
+            let nz = heartEquation(x, y, z + e) - heartEquation(x, y, z - e);
+            
+            const nl = Math.hypot(nx, ny, nz) || 1;
+            nx /= nl; ny /= nl; nz /= nl;
+            
+            const rim = 1 - Math.abs(nx * Vo[0] + ny * Vo[1] + nz * Vo[2]);
+            let lum = Math.max(0, nx * Lo[0] + ny * Lo[1] + nz * Lo[2]) * .7 + .18 + rim * rim * .6 + .1 * Math.sin(y * 9 + x * 4 - T * 2.2);
+            
+            let on = 0;
+            if(nz > .25){
+                const u = (x + BW / 2) / BW;
+                const v = (BY0 + BH / 2 - y) / BH;
+                if(u >= 0 && u < 1 && v >= 0 && v < 1){
+                    lum *= .3;
+                    on = mask[(v * MH | 0) * MW + (u * MW | 0)];
+                }
+            }
+            
+            idx[k] = on ? 12 : 1 + Math.floor(clampVal(lum * boost, 0, .999) * 11);
+        }
+    }
+    
+    // Render loop
+    g.fillStyle = '#050008';
+    g.fillRect(0, 0, W, H);
+    g.font = fs + 'px ' + FONT;
+    g.textBaseline = 'top';
+    
+    // Background matrix rain
+    for(let c = 0; c < cols; c += 2){
+        drops[c] += spd[c] * dt * mot * (14 / ch);
+        if(drops[c] > rows + 10){
+            drops[c] = -Math.random() * 12;
+            spd[c] = 3 + Math.random() * 9;
+        }
+        const h = Math.floor(drops[c]);
+        for(let q = 0; q < (mobile ? 24 : 10); q++){
+            const r = h - q;
+            if(r < 0 || r >= rows || idx[r * cols + c]) continue;
+            g.fillStyle = q === 0 ? '#ff8ad8' : q < 4 ? '#8a1f78' : '#3d0f3a';
+            const s2 = (c / 2) % 4 === 0 ? PLAIN : BIN;
+            g.fillText(s2[(r + c * 5) % s2.length], c * cw, r * ch);
+        }
+    }
+    
+    if(T > nextCmdTime && activeCmds.length < 2 && rows > 6){
+        const cmdText = CMDS[Math.random() * CMDS.length | 0];
+        activeCmds.push({
+            t: "$ " + cmdText,
+            r: 1 + (Math.random() * (rows - 3 - CS) | 0),
+            c: Math.max(0, Math.random() * (cols - cmdText.length * CS - 3) | 0),
+            t0: T
+        });
+        nextCmdTime = T + 1.5 + Math.random() * 3;
+    }
+    
+    for(let n = activeCmds.length - 1; n >= 0; n--){
+        const m = activeCmds[n];
+        const age = T - m.t0;
+        const typed = Math.min(m.t.length, Math.floor(age * 20));
+        const fade = clampVal(1 - (age - m.t.length / 20 - 1.5) / .8, 0, 1);
+        
+        if(fade <= 0){
+            activeCmds.splice(n, 1);
+            continue;
+        }
+        
+        g.globalAlpha = fade;
+        g.font = (fs * CS) + 'px ' + FONT;
+        
+        for(let k = 0; k < typed; k++){
+            const c = m.c + k * CS;
+            if(c >= cols || idx[m.r * cols + c]) continue;
+            g.fillStyle = '#050008';
+            g.fillRect(c * cw, m.r * ch, cw * CS, ch * CS);
+            g.fillStyle = k < 2 ? '#19f0e0' : '#ffd0f0';
+            g.fillText(m.t[k], c * cw, m.r * ch);
+        }
+        
+        if(typed < m.t.length && !idx[m.r * cols + m.c + typed * CS]){
+            g.fillStyle = '#ffd0f0';
+            g.fillRect((m.c + typed * CS) * cw, m.r * ch, cw * .6 * CS, ch * CS);
+        }
+        
+        g.globalAlpha = 1;
+        g.font = fs + 'px ' + FONT;
+    }
+    
+    for(let b = 1; b < 13; b++){
+        g.fillStyle = COL[b];
+        const chn = b === 12 ? '@' : RAMP[b];
+        for(let j = 0; j < rows; j++){
+            for(let i = 0; i < cols; i++){
+                if(idx[j * cols + i] === b){
+                    g.fillText(chn, i * cw, j * ch);
+                }
+            }
+        }
+    }
+    
+    g.textAlign = 'left';
+    g.textBaseline = 'top';
+    g.font = (mobile ? 11 : fs) + 'px ' + FONT;
+    g.shadowBlur = 0;
+    
+    g.fillStyle = '#ff8ad8';
+    g.fillText('C:\\HEART> heart.exe /name:' + NAME + (Math.floor(T * 1.5) % 2 ? ' _' : ''), mobile ? 10 : cw, mobile ? 8 : ch * .6);
+    
+    g.fillStyle = '#8a1f78';
+    g.fillText('yaw ' + (yaw * 57.3).toFixed(1) + '\u00b0 pitch ' + (pitch * 57.3).toFixed(1) + '\u00b0' + (mobile ? '' : ' bpm 70 fps ' + Math.round(fps)), mobile ? 10 : cw, mobile ? H - 44 : H - ch * 2);
+}
+
+document.addEventListener('visibilitychange', () => {
+    if(document.hidden){
+        cancelAnimationFrame(rafId);
+    } else {
+        lastFrameTime = performance.now();
+        rafId = requestAnimationFrame(loop);
+    }
+});
+
+rafId = requestAnimationFrame(loop);
+})();
+</script>
+<script>
+(()=>{
+const bootElem = document.getElementById('boot');
+const boxElem = document.getElementById('bp');
+if(!bootElem) return;
+
+const isFast = matchMedia('(prefers-reduced-motion:reduce)').matches;
+const N = CONFIG.name.toLocaleUpperCase('tr');
+let isDone = false;
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, isFast ? ms / 5 : ms));
+
+function finishBoot(){
+    if(isDone) return;
+    isDone = true;
+    bootElem.classList.add('out');
+    setTimeout(() => bootElem.remove(), 800);
+    removeEventListener('keydown', finishBoot);
+}
+
+bootElem.addEventListener('pointerdown', finishBoot);
+addEventListener('keydown', finishBoot);
+
+const curSpan = document.createElement('span');
+curSpan.className = 'cur';
+
+function createLine(prefix, className){
+    const d = document.createElement('div');
+    const p = document.createElement('span');
+    const t = document.createElement('span');
+    
+    p.className = 'p';
+    p.textContent = prefix;
+    t.className = className || '';
+    
+    d.append(p, t, curSpan);
+    boxElem.appendChild(d);
+    return t;
+}
+
+async function typeText(prefix, text, className, speed){
+    const target = createLine(prefix, className);
+    for(const char of text){
+        if(isDone) return;
+        target.textContent += char;
+        await sleep(speed || 16);
+    }
+    await sleep(220);
+}
+
+(async()=>{
+    await sleep(650);
+    await typeText('$', 'sana_kalp.exe /name:' + N);
+    await typeText('>', 'Yükleniyor...');
+    await typeText('$', 'sudo sevsene --hep');
+    
+    const progressBar = createLine('>');
+    for(let i = 0; i <= 20 && !isDone; i++){
+        progressBar.textContent = '[' + '#'.repeat(i) + '-'.repeat(20 - i) + '] ' + (i * 5) + '%';
+        await sleep(55);
+    }
+    
+    await sleep(650);
+    await typeText('>', 'BEKLE. Sana bir şey hazırladım.', 'h', 28);
+    await typeText('>', 'Umarım beğenirsin yaptığımı.', 'h', 28);
+    await typeText('>', 'Unutma seni her seyden cok seviyorum bitanem.', 'h', 28);
+    await typeText('$', './baslat.sh', 0, 30);
+    
+    await sleep(650);
+    finishBoot();
+})();
+
+setTimeout(finishBoot, 16000);
+})();
+</script>
+</body>
+</html>
